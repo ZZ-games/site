@@ -50,7 +50,7 @@ function initHome() {
   if (SITE.requestFormUrl) req.href = SITE.requestFormUrl; else req.remove();
 
   // Hero
-  const f = GAMES.find((g) => g.featured && g.url) || GAMES.find((g) => g.url) || GAMES[0];
+  const f = GAMES.find((g) => g.featured && g.url) || GAMES.find((g) => g.url && g.image) || GAMES.find((g) => g.url) || GAMES[0];
   const hero = document.getElementById("hero");
   hero.innerHTML = `
     <img class="brand" src="images/logo.png" alt="${SITE.name}">
@@ -92,7 +92,7 @@ function initHome() {
     const q = search.value.trim().toLowerCase();
     const list = GAMES.filter((g) =>
       (current === "All" || g.category === current) && g.title.toLowerCase().includes(q))
-      .sort((a, b) => !!b.url - !!a.url); // playable games first
+      .sort((a, b) => (!!b.url - !!a.url) || (!!b.image - !!a.image)); // playable games first, then ones with covers
     grid.replaceChildren(...list.map(card));
     document.getElementById("empty").hidden = list.length > 0;
     document.getElementById("gridTitle").textContent =
