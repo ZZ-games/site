@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Russo+One&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
   <link rel="icon" href="images/favicon.png">
-  <link rel="stylesheet" href="style.css?v=202610101435">
+  <link rel="stylesheet" href="style.css?v=202610101444">
   <style>
     .gamble-hero {
       margin-top: 24px; border-radius: 22px; padding: clamp(28px, 5vw, 56px) 20px; text-align: center;
@@ -24,8 +24,14 @@
       filter: drop-shadow(0 0 22px #f5c24266);
     }
     .gamble-hero .zz { background: linear-gradient(180deg, #7fb2ff, #1f6bff); -webkit-background-clip: text; background-clip: text; }
-    .gamble-hero p { color: #d8c79a; margin: 10px 0 0; font-weight: 600; }
-    .gamble-grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); margin-top: 28px; }
+        .gamble-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: clamp(16px, 3vw, 32px); margin-top: 32px; }
+    .gamble-grid .card { width: clamp(150px, 28vw, 300px); }
+    .gamble-grid .name { font-size: 1.05rem; }
+    @media (max-width: 640px) {
+      .gamble-grid { gap: 12px; }
+      .gamble-grid .card { width: calc(50% - 6px); }
+      .gamble-grid .name { font-size: .92rem; white-space: normal; }
+    }
     .gamble-grid .card:hover { border-color: #f5c242; box-shadow: 0 10px 30px #f5c24233; }
   </style>
 </head>
@@ -38,7 +44,6 @@
   <main>
     <section class="gamble-hero">
       <h1><span class="zz">ZZ</span>-GAMBLE</h1>
-      <p>Play money only. Nothing here is real.</p>
     </section>
     <div id="grid" class="grid gamble-grid"></div>
   </main>
