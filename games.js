@@ -21,7 +21,7 @@ const SITE = {
 };
 
 const GAMES = [
-  { title: "Kart Rush GP", category: "Racing", repo: "", url: "", image: "", featured: true },
+  { title: "Tung Tung Kart", category: "Racing", user: "ZZ-Interactives", repo: "Tung-Tung-Kart", url: "https://tung-tung-kart.netlify.app/", image: "images/covers/tung-tung-kart.jpg", featured: true },
 
   { title: "Slope", category: "Arcade", repo: "Slope", url: "games/slope/", image: "images/covers/slope.jpg" },
   { title: "Geometry Dash Lite", category: "Arcade", repo: "geometry-dash", url: "", image: "images/covers/geometry-dash-lite.jpg" },
