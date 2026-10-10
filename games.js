@@ -50,7 +50,6 @@ const GAMES = [
   { title: "Among Us", category: "Action", repo: "Among-Us", url: "games/among-us/", image: "images/covers/among-us.jpg" },
   { title: "Super Liquid Soccer", category: "Sports", repo: "Super-Liquid-Soccer", url: "games/super-liquid-soccer/", image: "images/covers/super-liquid-soccer.jpg" },
   { title: "Wrestle Bros", category: "Sports", repo: "", url: "", image: "images/covers/wrestle-bros.jpg" },
-  { title: "Flip Man", category: "Arcade", user: "zz126j", repo: "flip-man", url: "games/flip-man/", image: "" },
   { title: "Ramp Car vs Police", category: "Racing", user: "zz126j", repo: "Ramp-Car-vs-Police", url: "games/ramp-car-vs-police/", image: "images/covers/ramp-car-vs-police.jpg" },
   { title: "Basketball Stars", category: "Sports", repo: "", url: "", image: "images/covers/basketball-stars.jpg" },
   { title: "Draw Climber", category: "Puzzle", repo: "", url: "", image: "images/covers/draw-climber.jpg" },
