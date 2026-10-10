@@ -15,7 +15,6 @@
 
 const SITE = {
   name: "ZZ Games",
-  tagline: "Fast games. No waiting. Just play.",
   githubUser: "ZZ-games",
   requestFormUrl: "https://sites.google.com/view/zz-games-/feature-requests/request-form",
 };
@@ -44,8 +43,8 @@ const GAMES = [
   { title: "Subway Surfers", category: "Arcade", repo: "subway-surfers", url: "", image: "images/covers/subway-surfers.jpg" },
   { title: "Apple Worm", category: "Puzzle", repo: "Apple-Worm", url: "games/apple-worm/", image: "images/covers/apple-worm.jpg" },
   { title: "Escape Road", category: "Racing", repo: "Escape-Road", url: "games/escape-road/", image: "images/covers/escape-road.jpg" },
-  { title: "Hole.io", category: "Arcade", repo: "", url: "", image: "images/covers/hole-io.jpg" },
-  { title: "Dunk Shot", category: "Sports", repo: "", url: "", image: "images/covers/dunk-shot.jpg" },
+  { title: "Hole.io", category: "Arcade", repo: "Hole.io", url: "games/hole-io/", image: "images/covers/hole-io.jpg" },
+  { title: "Dunk Shot", category: "Sports", repo: "Dunk-Shot", url: "games/dunk-shot/", image: "images/covers/dunk-shot.jpg" },
   { title: "Moto X3M", category: "Racing", repo: "", url: "", image: "images/covers/moto-x3m.jpg" },
   { title: "Fly the Plane", category: "Arcade", user: "zz126j", repo: "Fly-the-plane", url: "games/fly-the-plane/", image: "images/covers/fly-the-plane.jpg" },
   { title: "Among Us", category: "Action", repo: "Among-Us", url: "games/among-us/", image: "images/covers/among-us.jpg" },
@@ -78,7 +77,7 @@ const GAMES = [
   { title: "Money Rush", category: "Arcade", repo: "", url: "", image: "images/covers/money-rush.jpg" },
   { title: "Grass Mowing Simulator", category: "Other", repo: "", url: "", image: "images/covers/grass-mowing-simulator.jpg" },
   { title: "Elytra Flight", category: "Arcade", repo: "", url: "", image: "images/covers/elytra-flight.jpg" },
-  { title: "Crazy Motorcycle", category: "Racing", repo: "", url: "", image: "images/covers/crazy-motorcycle.jpg" },
+  { title: "Crazy Motorcycle", category: "Racing", repo: "Crazy-Motercycle", url: "games/crazy-motercycle/", image: "images/covers/crazy-motorcycle.jpg" },
   { title: "Crossy Road", category: "Arcade", repo: "", url: "", image: "images/covers/crossy-road.jpg" },
   { title: "Fruit Ninja", category: "Arcade", repo: "", url: "", image: "images/covers/fruit-ninja.jpg" },
   { title: "Suika Game", category: "Puzzle", repo: "", url: "", image: "images/covers/suika-game.jpg" },

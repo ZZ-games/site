@@ -68,7 +68,7 @@ main { padding: 0 clamp(16px, 4vw, 40px) 40px; max-width: 1400px; margin: 0 auto
 }
 .hero .brand {
   display: block; width: min(820px, 100%); height: auto; margin: 0 auto;
-  filter: drop-shadow(0 0 28px #1f6bffaa); margin-bottom: 14px !important;
+  filter: drop-shadow(0 0 28px #1f6bffaa); margin-bottom: 26px !important;
 }
 .hero .tagline { color: #b9c6f2; margin: 4px 0 22px; font-size: 1.05rem; }
 .featured {

@@ -54,7 +54,6 @@ function initHome() {
   const hero = document.getElementById("hero");
   hero.innerHTML = `
     <img class="brand" src="images/logo.png" alt="${SITE.name}">
-    <p class="tagline">${SITE.tagline}</p>
     <div class="featured">
       <div class="thumb" style="${coverStyle(f)}">${f.image ? "" : initials(f.title)}</div>
       <div><div class="tag">FEATURED</div><div class="t"></div></div>
@@ -98,20 +97,28 @@ function initHome() {
     document.getElementById("gridTitle").textContent =
       q ? `Results for “${search.value.trim()}”` : current === "All" ? "All games" : `${current} games`;
   }
-  search.addEventListener("input", render);
+  search.addEventListener("input", () => {
+    if (search.value.trim().toLowerCase() === "ss") { location.href = "gamble.html"; return; }
+    render();
+  });
   document.getElementById("count").textContent = GAMES.length;
   render();
 }
 
 /* ---------------- Play page ---------------- */
 function initPlay() {
-  const id = new URLSearchParams(location.search).get("game");
-  const g = GAMES.find((x) => x.id === id);
+  const params = new URLSearchParams(location.search);
+  const id = params.get("game");
+  let g = GAMES.find((x) => x.id === id);
+  const gamble = params.get("gamble");
+  if (!g && gamble && /^gamble\/[a-z0-9-]+\/$/.test(gamble)) {
+    g = { id: "", title: params.get("title") || "ZZ-Gamble", url: gamble, gamble: true };
+  }
   if (!g) { location.href = "index.html"; return; }
 
   document.title = `${g.title} · ${SITE.name}`;
   document.getElementById("gameTitle").textContent = g.title;
-  addRecent(g.id);
+  if (!g.gamble) addRecent(g.id);
 
   const frame = document.getElementById("frame");
   const loader = document.getElementById("loader");

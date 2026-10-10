@@ -13,9 +13,9 @@ Open `games.js`. Each game is one line:
 - **featured: true** – shows that game in the big banner at the top.
 
 ## Put it online (free)
-**Option A – GitHub Pages (easiest):** In this repo go to **Settings → Pages**, set Source to "Deploy from a branch", pick `main` and `/ (root)`, and save. In a minute the site is live at https://zz-games.github.io/zz-games-site/
+**Option A – GitHub Pages (easiest):** In this repo go to **Settings → Pages**, set Source to "Deploy from a branch", pick `main` and `/ (root)`, and save. In a minute the site is live at https://zz-games.github.io/site/
 
-**Option B – Cloudflare Pages or Netlify (nicer URL, custom domain):** Sign in at pages.cloudflare.com or netlify.com with GitHub, pick the `zz-games-site` repo, leave the build settings empty, and deploy.
+**Option B – Cloudflare Pages or Netlify (nicer URL, custom domain):** Sign in at pages.cloudflare.com or netlify.com with GitHub, pick the `site` repo, leave the build settings empty, and deploy.
 
 Either way, every change pushed to this repo updates the live site by itself.
 
@@ -24,3 +24,6 @@ Games save their progress in the player's browser. The site also remembers recen
 
 ## Where the games live
 Most games are copied into the `games/` folder of this repo, so they load from the site itself and don't depend on GitHub Pages being turned on in each game's own repo. Geometry Dash Lite, Subway Surfers and Moto Road Rash 3D are too big to copy, so they still load from their own repos on the ZZ-games account (GitHub Pages must be on for those).
+
+## ZZ-Gamble (hidden)
+Typing **SS** in the search box opens `gamble.html`, a hidden page with play-money casino games (Phantom Casino, Z-Bet, ZZ Casino). They live in the `gamble/` folder and are not listed on the main page.
