@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>Cluster Rush</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html, body {
+            width: 100%; height: 100%;
+            background: #222C36;
+            overflow: hidden;
+        }
+        .template-wrap {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%; height: 100%;
+        }
+        canvas {
+            display: block;
+            width: 100% !important;
+            height: 100% !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="template-wrap">
+        <canvas id="canvas" oncontextmenu="event.preventDefault()"></canvas>
+    </div>
+
+    <script>
+        var BASE = "https://cdn.jsdelivr.net/gh/classrooms-1/google.com@main/Release/";
+
+        // Stub UnityProgress so missing script does not crash
+        function UnityProgress(canvas) {
+            this.canvas = canvas;
+            this.SetMessage = function(msg) { console.log('[Loading]', msg); };
+            this.SetProgress = function(p) {};
+            this.Clear = function() {};
+        }
+
+        var Module = {
+            TOTAL_MEMORY: 268435456,
+            errorhandler: null,
+            compatibilitycheck: null,
+            backgroundColor: "#222C36",
+            splashStyle: "Dark",
+            dataUrl:  BASE + "NG.data",
+            codeUrl:  BASE + "NG.js",
+            asmUrl:   BASE + "NG.asm.js",
+            memUrl:   BASE + "NG.mem",
+            // Override locateFile so every asset resolves to its correct CDN URL
+            locateFile: function(filename) {
+                return BASE + filename;
+            },
+            // The data loader uses filePackagePrefixURL to resolve build.data
+            filePackagePrefixURL: BASE,
+            canvas: document.createElement('canvas'), // temp, replaced on load
+        };
+
+        window.addEventListener('load', function() {
+            Module.canvas = document.getElementById('canvas');
+
+            var script = document.createElement('script');
+            script.src = BASE + "UnityLoader.js";
+            document.body.appendChild(script);
+        });
+    </script>
+</body>
+</html>

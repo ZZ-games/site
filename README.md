@@ -21,3 +21,6 @@ Either way, every change pushed to this repo updates the live site by itself.
 
 ## Saves
 Games save their progress in the player's browser. The site also remembers recently played games and shows them under "Jump back in".
+
+## Where the games live
+Most games are copied into the `games/` folder of this repo, so they load from the site itself and don't depend on GitHub Pages being turned on in each game's own repo. Geometry Dash Lite, Subway Surfers and Moto Road Rash 3D are too big to copy, so they still load from their own repos on the ZZ-games account (GitHub Pages must be on for those).
