@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <!-- iPad: full viewport, no user scaling which breaks keyboard -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+
+    <style>
+        * { box-sizing: border-box; }
+
+        html, body {
+            background-image: url("https://cdn.jsdelivr.net/gh/papamamia/447755@main/Build/Build.jpg");
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            padding: 0;
+            margin: 0;
+            background-color: black;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        div#gameContainer {
+            background: transparent !important;
+            position: absolute;
+            top: 0px !important;
+            width: 100% !important;
+            height: 100% !important;
+            left: 0px !important;
+        }
+
+        div#gameContainer canvas {
+            position: absolute;
+            width: 100% !important;
+            height: 100% !important;
+        }
+
+        div#gameContainer canvas[data-pixel-art="true"] {
+            position: absolute;
+            image-rendering: optimizeSpeed;
+            image-rendering: -webkit-crisp-edges;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: crisp-edges;
+            image-rendering: pixelated;
+            -ms-interpolation-mode: nearest-neighbor;
+        }
+
+        .loadingOut {
+            width: 250px;
+            position: fixed;
+            left: 50%;
+            top: calc(50% - 8px);
+            transform: translate(-50%);
+            border: 2px solid white;
+            height: 14px;
+            background: transparent;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(to right, white, white 0%, transparent 0%, transparent);
+        }
+
+        .centered {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            margin-top: -150px;
+            margin-left: -250px;
+            width: 500px;
+        }
+
+        #orientation-warning {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: red;
+            color: white;
+            padding: 20px;
+            border: 2px solid white;
+            text-align: center;
+            z-index: 1000;
+        }
+
+        #orientation-image {
+            width: 125px;
+            height: 125px;
+            margin-top: 10px;
+            display: none;
+            position: fixed;
+            top: calc(50% - 150px);
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+    </style>
+
+    <script>
+        // ─── SMART CURRENCY INTERCEPTOR ─────────────────────────────────────────
+        // This hooks localStorage.setItem to catch the EXACT keys the game uses,
+        // then immediately overrides currency/unlock values with our target amounts.
+        (function smartInject() {
+            var COINS = 6700;
+            var COINS_STR = String(COINS);
+
+            // Keywords that indicate a currency/coin key
+            var COIN_WORDS = ['coin','gift','gem','star','money','cash','currency','score','token','shell','point','credit'];
+            // Keywords that indicate a board/sled unlock key
+            var UNLOCK_WORDS = ['board','sled','unlock','own','purchas','have','equip','surf','item','kart','vehicle','skin','character'];
+            // Keywords that should NOT be overridden even if they match (scores etc)
+            var SKIP_WORDS = ['best','high','record','distance','total_score','bestscore','highscore'];
+
+            function isCurrencyKey(key) {
+                var k = key.toLowerCase();
+                if (SKIP_WORDS.some(function(w){ return k.indexOf(w) !== -1; })) return false;
+                return COIN_WORDS.some(function(w){ return k.indexOf(w) !== -1; });
+            }
+
+            function isUnlockKey(key) {
+                var k = key.toLowerCase();
+                return UNLOCK_WORDS.some(function(w){ return k.indexOf(w) !== -1; });
+            }
+
+            // Override setItem to intercept game writes
+            var _setItem = localStorage.setItem.bind(localStorage);
+            localStorage.setItem = function(key, value) {
+                if (isCurrencyKey(key)) {
+                    // Only override if the game is trying to write LESS than our target
+                    var current = parseInt(localStorage.getItem(key)) || 0;
+                    if (current < COINS) {
+                        console.log('[SR] Currency key intercepted: ' + key + ' = ' + value + ' → overriding to ' + COINS_STR);
+                        _setItem(key, COINS_STR);
+                        return;
+                    }
+                } else if (isUnlockKey(key)) {
+                    // Always set unlock keys to 1
+                    console.log('[SR] Unlock key intercepted: ' + key + ' → setting to 1');
+                    _setItem(key, '1');
+                    return;
+                }
+                _setItem(key, value);
+            };
+
+            // Also pre-seed with all likely key patterns before the game loads
+            var AMOUNT = COINS_STR;
+            var prefixes = [
+                'GameVGames_Summer Rider 3D_',
+                'GameVGames_SummerRider3D_',
+                'Summer Rider 3D_',
+                'SummerRider3D_',
+                'SummerRider_',
+                'GVG_SummerRider_',
+                '',
+            ];
+            var coinKeys = [
+                'Coins','coins','Coin','coin',
+                'Gifts','gifts','Gift','gift',
+                'Gems','gems','Stars','stars',
+                'Shells','shells','Tokens','tokens',
+                'Currency','currency','Cash','cash',
+                'Points','points','Credits','credits',
+            ];
+            var boardKeys = [
+                'Board_','board_','BoardUnlocked_','boardUnlocked_',
+                'Sled_','sled_','SledUnlocked_','sledUnlocked_',
+                'Surfboard_','surfboard_','Item_','item_',
+                'Unlocked_','unlocked_','Owned_','owned_',
+                'Purchased_','purchased_','Have_','have_',
+            ];
+
+            prefixes.forEach(function(p) {
+                coinKeys.forEach(function(k) { _setItem(p + k, AMOUNT); });
+                for (var i = 0; i <= 30; i++) {
+                    boardKeys.forEach(function(k) { _setItem(p + k + i, '1'); });
+                }
+            });
+
+            console.log('[SummerRider] Pre-seeded ' + AMOUNT + ' coins + interceptor active. All board keys unlocked.');
+        })();
+
+        // ─── iPAD KEYBOARD FIX ──────────────────────────────────────────────────
+        document.addEventListener('DOMContentLoaded', function () {
+            // Block Safari from scrolling page with arrow keys
+            window.addEventListener('keydown', function (e) {
+                var blocked = ['ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' '];
+                if (blocked.indexOf(e.key) !== -1) e.preventDefault();
+            }, { passive: false });
+
+            // Wait for Unity canvas, then keep it focused
+            var focusInterval = setInterval(function () {
+                var canvas = document.querySelector('#unity-canvas');
+                if (canvas) {
+                    clearInterval(focusInterval);
+                    if (canvas.tabIndex < 0) canvas.tabIndex = 0;
+                    canvas.focus();
+
+                    document.addEventListener('click', function () { canvas.focus(); });
+                    document.addEventListener('touchend', function () { canvas.focus(); });
+
+                    // Relay keyboard events to canvas if focus drifted
+                    document.addEventListener('keydown', function (e) {
+                        if (document.activeElement !== canvas) {
+                            canvas.dispatchEvent(new KeyboardEvent('keydown', {
+                                key: e.key, code: e.code, keyCode: e.keyCode,
+                                which: e.which, bubbles: true, cancelable: true
+                            }));
+                        }
+                    });
+                    document.addEventListener('keyup', function (e) {
+                        if (document.activeElement !== canvas) {
+                            canvas.dispatchEvent(new KeyboardEvent('keyup', {
+                                key: e.key, code: e.code, keyCode: e.keyCode,
+                                which: e.which, bubbles: true, cancelable: true
+                            }));
+                        }
+                    });
+                }
+            }, 300);
+        });
+    </script>
+</head>
+
+<body>
+    <img id="orientation-image" src="https://cdn.jsdelivr.net/gh/papamamia/447755@main/TemplateData/Orientation/orientation.png" alt="Orientation">
+    <div id="orientation-warning">
+        <div>Please rotate your device to landscape mode.</div>
+    </div>
+
+    <div id="gameContainer">
+        <img src="https://cdn.jsdelivr.net/gh/papamamia/447755@main/TemplateData/logo.png" class="centered">
+        <div class="loadingOut">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+        <canvas id="unity-canvas" data-pixel-art=""></canvas>
+
+        <script src="https://cdn.jsdelivr.net/gh/papamamia/447755@main/Build/SummerRiderV1.5.loader.js"></script>
+        <script>
+            var canvas = document.querySelector("#unity-canvas");
+            var progressBar = document.querySelector("#progress-bar");
+            var gameContainer = document.querySelector("#gameContainer");
+            var orientationWarning = document.querySelector("#orientation-warning");
+            var orientationImage = document.querySelector("#orientation-image");
+
+            var TOTAL_PARTS = 9;
+            var DATA_FILE_BASE = "https://cdn.jsdelivr.net/gh/papamamia/447755@main/Build/SummerRiderV1.5.data.unityweb";
+
+            var config = {
+                dataUrl: DATA_FILE_BASE,
+                frameworkUrl: "https://cdn.jsdelivr.net/gh/papamamia/447755@main/Build/SummerRiderV1.5.framework.js.unityweb",
+                codeUrl: "https://cdn.jsdelivr.net/gh/papamamia/447755@main/Build/SummerRiderV1.5.wasm.unityweb",
+                streamingAssetsUrl: "StreamingAssets",
+                companyName: "GameVGames",
+                productName: "Summer Rider 3D",
+                productVersion: "1.0",
+            };
+
+            var scaleToFit = true;
+
+            function progressHandler(progress) {
+                var percent = progress * 100 + '%';
+                progressBar.style.background = 'linear-gradient(to right, white, white ' + percent + ', transparent ' + percent + ', transparent)';
+            }
+
+            async function loadMultiPartData(baseUrl, totalParts) {
+                var chunks = [];
+                var totalLoaded = 0;
+                var estimatedTotalSize = 42 * 1024 * 1024;
+
+                for (var i = 0; i < totalParts; i++) {
+                    var partUrl = baseUrl + ".part" + i;
+                    var response = await fetch(partUrl);
+                    if (!response.ok) throw new Error("Failed to load part " + i);
+
+                    var reader = response.body.getReader();
+                    var partChunks = [];
+
+                    while (true) {
+                        var result = await reader.read();
+                        if (result.done) break;
+                        partChunks.push(result.value);
+                        totalLoaded += result.value.length;
+                        progressHandler(Math.min(totalLoaded / estimatedTotalSize * 0.8, 0.8));
+                    }
+
+                    var partSize = partChunks.reduce(function(acc, c) { return acc + c.length; }, 0);
+                    var partData = new Uint8Array(partSize);
+                    var offset = 0;
+                    for (var j = 0; j < partChunks.length; j++) {
+                        partData.set(partChunks[j], offset);
+                        offset += partChunks[j].length;
+                    }
+                    chunks.push(partData);
+                }
+
+                var totalSize = chunks.reduce(function(acc, c) { return acc + c.length; }, 0);
+                var merged = new Uint8Array(totalSize);
+                var mergeOffset = 0;
+                for (var k = 0; k < chunks.length; k++) {
+                    merged.set(chunks[k], mergeOffset);
+                    mergeOffset += chunks[k].length;
+                }
+                return merged;
+            }
+
+            async function initializeGame() {
+                try {
+                    var mergedData = await loadMultiPartData(DATA_FILE_BASE, TOTAL_PARTS);
+                    var blob = new Blob([mergedData], { type: "application/octet-stream" });
+                    config.dataUrl = URL.createObjectURL(blob);
+                    progressHandler(0.85);
+
+                    createUnityInstance(canvas, config, function(progress) {
+                        progressHandler(0.85 + progress * 0.15);
+                    }).then(function(instance) {
+                        canvas = instance.Module.canvas;
+                        myGameInstance = instance;
+                        onResize();
+                    }).catch(function(error) {
+                        console.error("Unity init error:", error);
+                    });
+                } catch (error) {
+                    console.error("Game load error:", error);
+                }
+            }
+
+            function onResize() {
+                var w = window.innerWidth;
+                var h = window.innerHeight;
+                var r = 1080 / 1920;
+                if (w * r > h) w = Math.min(w, Math.ceil(h / r));
+                h = Math.floor(w * r);
+                gameContainer.style.width = canvas.style.width = w + "px";
+                gameContainer.style.height = canvas.style.height = h + "px";
+                gameContainer.style.top = Math.floor((window.innerHeight - h) / 2) + "px";
+                gameContainer.style.left = Math.floor((window.innerWidth - w) / 2) + "px";
+            }
+
+            function checkOrientation() {
+                // iPad is always treated as capable — only show warning if truly portrait
+                if (window.innerHeight > window.innerWidth) {
+                    orientationWarning.style.display = 'block';
+                    orientationImage.style.display = 'block';
+                    gameContainer.style.display = 'none';
+                } else {
+                    orientationWarning.style.display = 'none';
+                    orientationImage.style.display = 'none';
+                    gameContainer.style.display = 'block';
+                }
+            }
+
+            initializeGame();
+
+            window.addEventListener('resize', function() {
+                onResize();
+                checkOrientation();
+            });
+
+            checkOrientation();
+        </script>
+
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/papamamia/447755@main/js/rhmApi.js"></script>
+    </div>
+</body>
+
+</html>

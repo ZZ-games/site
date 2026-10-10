@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <!-- iPad: allow full viewport, prevent user scaling which breaks keyboard -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <link rel="shortcut icon" href="https://cdn.jsdelivr.net/gh/era6yera6y/00@main/TemplateData/favicon.ico">
+    <meta name="description" content="Snow Rider 3D, Snow Rider 3D Mathnook, Snow Rider 3D Unblocked">
+    <meta property="og:image" content="https://cdn.jsdelivr.net/gh/era6yera6y/00@main/snow-rider-3d.png" />
+
+    <style>
+        * { box-sizing: border-box; }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background: #231F20;
+            /* Prevent iOS Safari from intercepting arrow keys / keyboard shortcuts */
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        /* Full-screen responsive wrapper */
+        #game-wrapper {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #231F20;
+        }
+
+        /* The Unity canvas fills the wrapper while keeping 960×600 aspect ratio */
+        #gameContainer {
+            width: 100%;
+            height: 100%;
+            max-width: 100vw;
+            max-height: 100vh;
+            /* Maintain 960:600 = 8:5 aspect ratio */
+            aspect-ratio: 8 / 5;
+        }
+
+        #gameContainer canvas {
+            width: 100% !important;
+            height: 100% !important;
+            display: block;
+            background: #231F20;
+        }
+
+        /* Unity progress / loading UI */
+        .webgl-content * { border: 0; margin: 0; padding: 0; }
+
+        .webgl-content .logo,
+        .webgl-content .progress,
+        .webgl-content .text {
+            position: absolute;
+            left: 50%;
+            top: 40%;
+            -webkit-transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%);
+        }
+
+        .webgl-content .logo {
+            background: url('https://cdn.jsdelivr.net/gh/era6yera6y/00@main/TemplateData/logo.png') no-repeat center / contain;
+            width: 500px;
+            height: 155px;
+        }
+
+        .webgl-content .progress {
+            height: 26px;
+            width: 211px;
+            margin-top: 120px;
+        }
+
+        .webgl-content .progress .empty {
+            background: white;
+            float: right;
+            width: 100%;
+            height: 100%;
+            display: inline-block;
+        }
+
+        .webgl-content .progress .full {
+            background: royalblue;
+            float: left;
+            width: 0%;
+            height: 100%;
+            display: inline-block;
+        }
+
+        .webgl-content .text {
+            margin-top: 170px;
+            color: white;
+            font-family: Helvetica, Arial, sans-serif;
+            font-weight: 700;
+            font-size: 25px;
+            width: 500px;
+            text-align: center;
+        }
+
+        .webgl-content .spinner { vertical-align: middle; height: 100px; }
+    </style>
+
+    <script>
+        // ─── SET GIFTS TO 6700 ───────────────────────────────────────────────────
+        // Unity WebGL stores PlayerPrefs in localStorage. We try every possible
+        // key variation this build might use so the gift count definitely sticks.
+        (function setGifts() {
+            var GIFTS = '6700';
+
+            // All known prefix patterns for this build
+            var prefixes = [
+                'Snow Rider_Snow Rider 3D_',
+                'SnowRider_SnowRider3D_',
+                'Snow Rider 3D_',
+                'SnowRider3D_',
+                '',   // no prefix fallback
+            ];
+
+            // All known gift key names this game might use
+            var giftKeys = [
+                'Gifts', 'gifts', 'Gift', 'gift',
+                'TotalGifts', 'totalGifts', 'GiftCount', 'giftCount',
+                'Coins', 'coins', 'Currency', 'currency',
+                'Score', 'TotalScore', 'GiftTotal', 'CollectedGifts',
+            ];
+
+            // All known sled unlock key patterns
+            var sledKeys = [
+                'Sled_', 'sled_', 'Sled', 'sled',
+                'sledUnlocked_', 'SledUnlocked_',
+                'unlocked_', 'Unlocked_',
+                'sledOwned_', 'SledOwned_',
+            ];
+
+            prefixes.forEach(function(prefix) {
+                // Set gifts
+                giftKeys.forEach(function(key) {
+                    localStorage.setItem(prefix + key, GIFTS);
+                });
+                // Unlock all sled indices 0–25
+                for (var i = 0; i <= 25; i++) {
+                    sledKeys.forEach(function(key) {
+                        localStorage.setItem(prefix + key + i, '1');
+                    });
+                }
+            });
+
+            console.log('[SnowRider] Gifts set to ' + GIFTS + ' across all key variants.');
+        })();
+
+        // ─── iPAD KEYBOARD FIX ──────────────────────────────────────────────────
+        // Unity WebGL captures keyboard via the canvas. On iPad with a hardware
+        // keyboard, the browser sometimes swallows arrow/WASD keys before Unity
+        // sees them. We re-dispatch them directly on the canvas element once it
+        // exists, and also block Safari's default scroll behaviour on arrow keys.
+        document.addEventListener('DOMContentLoaded', function () {
+            // Block Safari arrow-key page scroll (needed on iPadOS Safari)
+            window.addEventListener('keydown', function (e) {
+                var blocked = ['ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' '];
+                if (blocked.indexOf(e.key) !== -1) {
+                    e.preventDefault();
+                }
+            }, { passive: false });
+
+            // Wait for Unity canvas to appear, then make sure it is focused
+            // so all keystrokes are received by the game engine.
+            var focusInterval = setInterval(function () {
+                var canvas = document.querySelector('#gameContainer canvas');
+                if (canvas) {
+                    clearInterval(focusInterval);
+                    // Give canvas a tabIndex so it can receive focus
+                    if (canvas.tabIndex < 0) canvas.tabIndex = 0;
+                    canvas.focus();
+
+                    // Re-focus canvas if the user clicks/taps anywhere on the page
+                    document.addEventListener('click', function () { canvas.focus(); });
+                    document.addEventListener('touchend', function () { canvas.focus(); });
+
+                    // On iPad, the soft keyboard or hardware keyboard events sometimes
+                    // fire on document rather than the canvas — relay them.
+                    document.addEventListener('keydown', function (e) {
+                        if (document.activeElement !== canvas) {
+                            canvas.dispatchEvent(new KeyboardEvent('keydown', {
+                                key: e.key, code: e.code, keyCode: e.keyCode,
+                                which: e.which, bubbles: true, cancelable: true
+                            }));
+                        }
+                    });
+                    document.addEventListener('keyup', function (e) {
+                        if (document.activeElement !== canvas) {
+                            canvas.dispatchEvent(new KeyboardEvent('keyup', {
+                                key: e.key, code: e.code, keyCode: e.keyCode,
+                                which: e.which, bubbles: true, cancelable: true
+                            }));
+                        }
+                    });
+                }
+            }, 300);
+        });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/gh/era6yera6y/00@main/TemplateData/UnityProgress.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/era6yera6y/00@main/Build/UnityLoader.js"></script>
+    <script>
+        var gameInstance = UnityLoader.instantiate(
+            "gameContainer",
+            "https://cdn.jsdelivr.net/gh/era6yera6y/00@main/Build/SnowRider3D-gd-1.json",
+            {
+                onProgress: UnityProgress,
+                Module: {
+                    onRuntimeInitialized: function () {
+                        UnityProgress(gameInstance, "complete");
+                    }
+                }
+            }
+        );
+    </script>
+</head>
+
+<body>
+    <div id="game-wrapper">
+        <div id="gameContainer"></div>
+    </div>
+</body>
+</html>
