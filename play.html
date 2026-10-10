@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Play · ZZ Games</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Russo+One&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="icon" href="images/favicon.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="play-page">
+  <header class="topbar">
+    <a href="index.html" class="logo"><img src="images/logo-flat.png" alt="ZZ Games"></a>
+    <h1 id="gameTitle" class="game-title"></h1>
+    <div class="actions">
+      <button id="reload" class="btn ghost" title="Restart">↻ Restart</button>
+      <button id="full" class="btn" title="Fullscreen">⛶ Fullscreen</button>
+    </div>
+  </header>
+
+  <main class="stage-wrap">
+    <div id="stage" class="stage">
+      <div id="loader" class="loader"><div class="spinner"></div><p>Loading game…</p></div>
+      <iframe id="frame" allow="fullscreen; autoplay; gamepad; clipboard-write" allowfullscreen></iframe>
+    </div>
+    <p class="hint">Your progress saves automatically in this browser.</p>
+
+    <h2>More games</h2>
+    <div id="more" class="grid small"></div>
+  </main>
+
+  <script src="games.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

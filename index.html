@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ZZ Games</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Russo+One&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="icon" href="images/favicon.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <a href="index.html" class="logo"><img src="images/logo-flat.png" alt="ZZ Games"></a>
+    <input id="search" type="search" placeholder="Search games…" autocomplete="off">
+    <a id="requestLink" class="btn ghost" target="_blank" rel="noopener">Request a game</a>
+  </header>
+
+  <main>
+    <section id="hero" class="hero"></section>
+
+    <nav id="cats" class="cats"></nav>
+
+    <section id="recentWrap" class="row-wrap" hidden>
+      <h2>Jump back in</h2>
+      <div id="recent" class="grid small"></div>
+    </section>
+
+    <section>
+      <h2 id="gridTitle">All games</h2>
+      <div id="grid" class="grid"></div>
+      <p id="empty" class="empty" hidden>No games match that search.</p>
+    </section>
+  </main>
+
+  <footer class="foot">ZZ Games · <span id="count"></span> games</footer>
+
+  <script src="games.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
