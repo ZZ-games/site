@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+  <script src=""></script>
+		<title>Cut the Rope</title>
+		<meta charset="utf-8" />
+		<meta name="viewport"
+			content="user-scalable=0, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, interactive-widget=resizes-content" />
+		<style>
+			body {
+				margin: 0px;
+				overflow: hidden;
+				background: black;
+			}
+		</style>
+		<script>
+			window.famobi_gameID = "{FAMOBI_GAMEID}";
+			window.famobi_gameJS = [
+				"ctrr.js",
+				function ()
+				{
+					Ctrr.main(window.famobi.getCurrentLanguage());
+				},
+			];
+			GameInterface.init(window.famobi_gameJS, {}, true);</script>
+	
+</head>
+	<body></body>
+</html>

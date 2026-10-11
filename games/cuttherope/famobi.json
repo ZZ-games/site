@@ -1,0 +1,69 @@
+{
+  "gameIdOnPortal": "93ad04f0987741f3adf6967b0a629aa9",
+  "toolGameId": "pcyZwBKxTFWzsn7tO9tX",
+  "gameId": "cut-the-rope",
+  "name": "Cut the Rope",
+  "version": "0.0.2",
+  "exportedAt": "2025-11-11T12:52:29.337Z",
+  "features": {
+    "audio": true,
+    "copyright": true,
+    "credits": true,
+    "pause": true,
+    "progress": true,
+    "score": true,
+    "tutorial": true,
+    "version": true,
+    "visibilitychange": true,
+    "iap": true,
+    "home": true,
+    "privacy": false
+  },
+  "ads": {
+    "initial": {
+      "enabled": false,
+      "preload": 250,
+      "retry": 2000,
+      "timeout": 250
+    },
+    "interstitial": {
+      "enabled": true,
+      "preload": 250,
+      "retry": 2000,
+      "timeout": 250,
+      "cooldown": 60,
+      "eventIds": [
+        "break:fail",
+        "break:result",
+        "button:failed:quit",
+        "button:level:pause",
+        "button:level:restart",
+        "button:levelselection:level",
+        "button:main:start",
+        "button:pause:quit",
+        "button:results:next",
+        "button:results:quit",
+        "button:results:restart"
+      ]
+    },
+    "rewarded": {
+      "enabled": true,
+      "preload": 500,
+      "retry": 2000,
+      "timeout": 250,
+      "eventIds": [
+        "rewarded:multipass"
+      ]
+    },
+    "banner": {
+      "enabled": false,
+      "preload": 250,
+      "retry": 2000,
+      "timeout": 250
+    }
+  },
+  "storage": {
+    "shouldCompress": false
+  },
+  "gameDistribution": {}
+}
