@@ -43,6 +43,126 @@ function addRecent(id) {
   } catch {}
 }
 
+/* ---------------- Settings (saved in this browser) ---------------- */
+const SETTINGS_KEY = "zz-settings";
+const DEFAULTS = { volume: 80, muted: false, fullMode: "window", autoFull: false, showRecent: true, reduceMotion: false };
+function getSettings() {
+  try { return { ...DEFAULTS, ...JSON.parse(localStorage.getItem(SETTINGS_KEY)) }; } catch { return { ...DEFAULTS }; }
+}
+let S = getSettings();
+function saveSettings() {
+  try { localStorage.setItem(SETTINGS_KEY, JSON.stringify(S)); } catch {}
+  applySettings();
+}
+const settingsListeners = [];
+function applySettings() {
+  document.documentElement.classList.toggle("reduce-motion", S.reduceMotion);
+  settingsListeners.forEach((fn) => fn(S));
+}
+
+function buildSettings() {
+  const btn = document.createElement("button");
+  btn.className = "btn ghost icon-btn";
+  btn.title = "Settings";
+  btn.setAttribute("aria-label", "Settings");
+  btn.textContent = "⚙";
+  document.querySelector(".topbar").appendChild(btn);
+
+  const panel = document.createElement("div");
+  panel.className = "settings-backdrop";
+  panel.hidden = true;
+  panel.innerHTML = `
+    <div class="settings" role="dialog" aria-label="Settings">
+      <div class="settings-head"><h3>Settings</h3><button class="x" aria-label="Close">✕</button></div>
+      <label class="row"><span>Volume <b id="volVal"></b></span>
+        <input id="setVol" type="range" min="0" max="100" step="1"></label>
+      <label class="row toggle"><span>Mute all games</span><input id="setMute" type="checkbox"></label>
+      <div class="row"><span>Fullscreen button</span>
+        <div class="seg" id="setFull">
+          <button data-v="window">Browser window</button><button data-v="screen">Whole screen</button>
+        </div></div>
+      <label class="row toggle"><span>Start games in fullscreen</span><input id="setAuto" type="checkbox"></label>
+      <label class="row toggle"><span>Show “Jump back in”</span><input id="setRecent" type="checkbox"></label>
+      <label class="row toggle"><span>Reduce animations</span><input id="setMotion" type="checkbox"></label>
+      <div class="row"><span>Recently played</span><button id="clearRecent" class="btn ghost small">Clear</button></div>
+      <p class="note">Settings save in this browser. Volume works on games hosted on ZZ Games; a few outside games (like Tung Tung Kart) use their own volume.</p>
+    </div>`;
+  document.body.appendChild(panel);
+  const $ = (s) => panel.querySelector(s);
+  const sync = () => {
+    $("#setVol").value = S.volume; $("#volVal").textContent = S.muted ? "Muted" : S.volume + "%";
+    $("#setMute").checked = S.muted; $("#setAuto").checked = S.autoFull;
+    $("#setRecent").checked = S.showRecent; $("#setMotion").checked = S.reduceMotion;
+    panel.querySelectorAll("#setFull button").forEach((b) => b.classList.toggle("on", b.dataset.v === S.fullMode));
+  };
+  const open = () => { sync(); panel.hidden = false; };
+  const close = () => { panel.hidden = true; };
+  btn.onclick = open;
+  $(".x").onclick = close;
+  panel.addEventListener("click", (e) => { if (e.target === panel) close(); });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !panel.hidden) close(); });
+  $("#setVol").oninput = (e) => { S.volume = +e.target.value; if (S.muted && S.volume > 0) S.muted = false; sync(); saveSettings(); };
+  $("#setMute").onchange = (e) => { S.muted = e.target.checked; sync(); saveSettings(); };
+  $("#setAuto").onchange = (e) => { S.autoFull = e.target.checked; saveSettings(); };
+  $("#setRecent").onchange = (e) => { S.showRecent = e.target.checked; saveSettings(); };
+  $("#setMotion").onchange = (e) => { S.reduceMotion = e.target.checked; saveSettings(); };
+  panel.querySelectorAll("#setFull button").forEach((b) => b.onclick = () => { S.fullMode = b.dataset.v; sync(); saveSettings(); });
+  $("#clearRecent").onclick = (e) => {
+    try { localStorage.removeItem(RECENT_KEY); } catch {}
+    e.target.textContent = "Cleared"; const w = document.getElementById("recentWrap"); if (w) w.hidden = true;
+  };
+}
+
+/* Game volume: works for games served from this site (same origin) */
+function hookGameAudio(frame) {
+  const level = () => (S.muted ? 0 : S.volume / 100);
+  let win = null;
+  function patch(w) {
+    if (!w || w.__zzAudio) return;
+    let doc;
+    try { doc = w.document; } catch { return; } // other site: can't control
+    w.__zzAudio = true;
+    const gains = [];
+    const AN = w.AudioNode && w.AudioNode.prototype;
+    if (AN) {
+      const orig = AN.connect;
+      AN.connect = function (dest, ...rest) {
+        if (dest && w.AudioDestinationNode && dest instanceof w.AudioDestinationNode && !this.__zzMaster) {
+          const ctx = dest.context;
+          if (!ctx.__zzGain) {
+            const g = ctx.createGain(); g.__zzMaster = true;
+            orig.call(g, dest); g.gain.value = level();
+            ctx.__zzGain = g; gains.push(g);
+          }
+          return orig.call(this, ctx.__zzGain, ...rest);
+        }
+        return orig.call(this, dest, ...rest);
+      };
+    }
+    const media = () => { try { doc.querySelectorAll("audio,video").forEach((m) => { m.volume = level(); m.muted = S.muted; }); } catch {} };
+    w.__zzApply = () => { gains.forEach((g) => { try { g.gain.value = level(); } catch {} }); media(); };
+    w.setInterval(media, 1500);
+    // Esc inside the game still exits browser-window fullscreen
+    w.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" }));
+    });
+  }
+  // Catch the game's window as early as possible, before it starts making sound
+  const watch = () => {
+    const t0 = Date.now();
+    const id = setInterval(() => {
+      let w; try { w = frame.contentWindow; } catch {}
+      if (w && w !== win) {
+        try { if (w.location.href !== "about:blank") { win = w; patch(w); } } catch { clearInterval(id); }
+      }
+      if (Date.now() - t0 > 15000) clearInterval(id);
+    }, 5);
+  };
+  frame.addEventListener("load", () => { try { patch(frame.contentWindow); frame.contentWindow.__zzApply && frame.contentWindow.__zzApply(); } catch {} });
+  settingsListeners.push(() => { try { frame.contentWindow.__zzApply && frame.contentWindow.__zzApply(); } catch {} });
+  return watch;
+}
+
 /* ---------------- Home page ---------------- */
 function initHome() {
   document.title = SITE.name;
@@ -79,7 +199,7 @@ function initHome() {
 
   // Recent
   const recent = getRecent().map((id) => GAMES.find((g) => g.id === id)).filter(Boolean);
-  if (recent.length) {
+  if (recent.length && S.showRecent) {
     document.getElementById("recentWrap").hidden = false;
     recent.forEach((g) => document.getElementById("recent").appendChild(card(g)));
   }
@@ -122,8 +242,9 @@ function initPlay() {
 
   const frame = document.getElementById("frame");
   const loader = document.getElementById("loader");
+  const startWatch = hookGameAudio(frame);
   if (g.url) {
-    frame.src = g.url;
+    frame.src = g.url; startWatch();
     frame.addEventListener("load", () => loader.classList.add("done"));
   } else {
     loader.querySelector("p").textContent = "This game doesn't have a link yet — add it in games.js.";
@@ -133,12 +254,33 @@ function initPlay() {
   document.getElementById("reload").onclick = () => {
     if (!g.url) return;
     loader.classList.remove("done");
-    frame.src = g.url;
+    frame.src = g.url; startWatch();
   };
-  document.getElementById("full").onclick = () => {
-    const el = document.getElementById("stage");
-    (el.requestFullscreen || el.webkitRequestFullscreen).call(el);
+
+  // Fullscreen: "window" fills the browser tab, "screen" takes over the whole monitor
+  const stage = document.getElementById("stage");
+  const fullBtn = document.getElementById("full");
+  const exitBtn = document.createElement("button");
+  exitBtn.className = "exit-full"; exitBtn.textContent = "✕ Exit fullscreen";
+  stage.appendChild(exitBtn);
+  const setWindowFull = (on) => {
+    document.body.classList.toggle("window-full", on);
+    fullBtn.textContent = on ? "⛶ Exit" : "⛶ Fullscreen";
+    if (on) frame.focus();
   };
+  const goFull = () => {
+    if (S.fullMode === "screen") {
+      const req = stage.requestFullscreen || stage.webkitRequestFullscreen;
+      if (req) return req.call(stage);
+    }
+    setWindowFull(true);
+  };
+  fullBtn.onclick = () => document.body.classList.contains("window-full") ? setWindowFull(false) : goFull();
+  exitBtn.onclick = () => setWindowFull(false);
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && document.body.classList.contains("window-full")) setWindowFull(false);
+  });
+  if (S.autoFull && g.url) setWindowFull(true);
 
   // More games: same category first
   const more = GAMES.filter((x) => x.id !== g.id)
@@ -147,4 +289,6 @@ function initPlay() {
   document.getElementById("more").replaceChildren(...more.map(card));
 }
 
+buildSettings();
+applySettings();
 if (document.body.classList.contains("play-page")) initPlay(); else initHome();

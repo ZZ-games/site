@@ -88,7 +88,7 @@ const GAMES = [
   { title: "BitLife", category: "Other", repo: "bitlife", url: "games/bitlife/", image: "images/covers/bitlife.jpg" },
   { title: "World's Hardest Game", category: "Puzzle", repo: "", url: "", image: "images/covers/world-s-hardest-game.jpg" },
   { title: "Poly Billiards", category: "Sports", user: "zz126j", repo: "Poly-Billiards", url: "games/poly-billiards/", image: "images/covers/poly-billiards.jpg" },
-  { title: "Tower Crash 3D", category: "Arcade", repo: "Tower-Crash-3d", url: "games/tower-crash-3d/", image: "" },
+  { title: "Tower Crash 3D", category: "Arcade", repo: "Tower-Crash-3d", url: "games/tower-crash-3d/", image: "images/covers/tower-crash-3d.jpg" },
   { title: "Highway Traffic 3D", category: "Racing", repo: "HighwayTraffic3D", url: "games/highwaytraffic3d/", image: "images/covers/highway-traffic-3d.jpg" },
   { title: "OvO", category: "Arcade", repo: "OvO", url: "games/ovo/", image: "images/covers/ovo.jpg" },
   { title: "Cookie Clicker", category: "Other", repo: "CookieClicker", url: "games/cookieclicker/", image: "images/covers/cookie-clicker.jpg" },
