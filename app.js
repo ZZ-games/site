@@ -177,7 +177,7 @@ function hookGameAudio(frame) {
 function initHome() {
   document.title = SITE.name;
   const req = document.getElementById("requestLink");
-  if (SITE.requestFormUrl) req.href = SITE.requestFormUrl; else req.remove();
+  req.href = "request.html";
 
   // Hero
   const f = GAMES.find((g) => g.featured && g.url) || GAMES.find((g) => g.url && g.image) || GAMES.find((g) => g.url) || GAMES[0];
@@ -318,6 +318,10 @@ function initPlay() {
   };
   document.addEventListener("keydown", forward);
   document.addEventListener("keyup", forward);
+
+  const report = document.getElementById("report");
+  if (report && !g.gamble) report.href = `request.html?type=broken&game=${encodeURIComponent(g.title)}`;
+  else if (report) report.remove();
 
   // More games: same category first
   const more = GAMES.filter((x) => x.id !== g.id)

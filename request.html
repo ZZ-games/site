@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Request a game · ZZ Games</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Russo+One&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="icon" href="images/favicon.png">
+  <link rel="stylesheet" href="style.css?v=202610141122">
+  <style>
+    .req-wrap { max-width: 720px; margin: 0 auto; }
+    .req-hero { text-align: center; margin: 32px 0 8px; }
+    .req-hero h1 { font-family: "Russo One", sans-serif; font-weight: 400; font-size: clamp(1.8rem, 6vw, 2.8rem); margin: 0;
+      background: linear-gradient(180deg, #bfe0ff, #5aa8ff 55%, #1f6bff); -webkit-background-clip: text; background-clip: text; color: transparent;
+      filter: drop-shadow(0 0 18px #1f6bff66); }
+    .req-hero p { color: var(--muted); margin: 8px 0 0; }
+    .req-card { margin-top: 24px; background: var(--panel); border: 1px solid #1f6bff44; border-radius: 20px; padding: clamp(18px, 4vw, 30px);
+      box-shadow: inset 0 0 60px #1f6bff12, 0 20px 60px #0007; }
+    .field { margin-bottom: 20px; }
+    .field > label, .field > .label { display: block; font-weight: 600; margin-bottom: 8px; }
+    .field .opt { color: var(--muted); font-weight: 400; font-size: .85rem; }
+    .types { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+    .types button { background: #ffffff0a; border: 1px solid #ffffff1a; color: var(--text); border-radius: 14px; padding: 14px 8px; cursor: pointer;
+      font: 600 .85rem Inter, sans-serif; display: grid; gap: 6px; justify-items: center; transition: border-color .15s, background .15s; }
+    .types button .ic { font-size: 1.5rem; }
+    .types button:hover { border-color: var(--accent); }
+    .types button.on { background: #1f6bff2e; border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent) inset; }
+    .req-card input[type=text], .req-card input[type=url], .req-card textarea {
+      width: 100%; background: #01031f; color: var(--text); border: 1px solid #ffffff1f; border-radius: 12px;
+      padding: 12px 14px; font: inherit; outline: none; }
+    .req-card input:focus, .req-card textarea:focus { border-color: var(--accent); }
+    .req-card textarea { min-height: 120px; resize: vertical; }
+    .count { color: var(--muted); font-size: .75rem; text-align: right; margin-top: 4px; }
+    .match { margin-top: 10px; display: none; align-items: center; gap: 12px; background: #0f7a3a22; border: 1px solid #2ecc7155;
+      border-radius: 12px; padding: 8px 10px; font-size: .88rem; }
+    .match.show { display: flex; }
+    .match .thumb { width: 52px; height: 39px; border-radius: 8px; background-size: cover; background-position: center; flex-shrink: 0; }
+    .match .btn { margin-left: auto; padding: 7px 14px; font-size: .8rem; }
+    .err { color: #ff8a8a; font-size: .85rem; margin-top: 6px; display: none; }
+    .err.show { display: block; }
+    .submit { width: 100%; padding: 14px; font-size: 1rem; }
+    .submit[disabled] { opacity: .6; cursor: default; transform: none; box-shadow: none; }
+    .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+    .done { text-align: center; padding: 20px 0 6px; }
+    .done .big { font-size: 3rem; }
+    .done h2 { margin: 6px 0; }
+    .done p { color: var(--muted); }
+    .mine { margin-top: 28px; }
+    .mine ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+    .mine li { background: var(--panel); border: 1px solid #ffffff10; border-radius: 12px; padding: 10px 14px; display: flex; gap: 10px; align-items: center; font-size: .9rem; }
+    .mine li .when { margin-left: auto; color: var(--muted); font-size: .75rem; white-space: nowrap; }
+    .mine li .tag { font-size: .7rem; font-weight: 800; letter-spacing: 1px; color: var(--accent-2); text-transform: uppercase; white-space: nowrap; }
+    @media (max-width: 640px) { .types { grid-template-columns: repeat(2, 1fr); } }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <a href="index.html" class="logo"><img src="images/logo-flat.png" alt="ZZ Games"></a>
+    <a href="index.html" class="btn ghost" style="margin-left:auto">← Back to games</a>
+  </header>
+
+  <main class="req-wrap">
+    <section class="req-hero">
+      <h1>Request a game</h1>
+      <p>Want a new game, found one that's broken, or have an idea? Tell us.</p>
+    </section>
+
+    <form id="form" class="req-card" novalidate>
+      <div class="field">
+        <span class="label">What's this about?</span>
+        <div class="types" id="types">
+          <button type="button" data-v="New game" class="on"><span class="ic">🎮</span>New game</button>
+          <button type="button" data-v="Broken game"><span class="ic">🛠️</span>Broken game</button>
+          <button type="button" data-v="Site idea"><span class="ic">💡</span>Site idea</button>
+          <button type="button" data-v="Other"><span class="ic">💬</span>Other</button>
+        </div>
+      </div>
+
+      <div class="field" id="gameField">
+        <label for="game" id="gameLabel">Game name</label>
+        <input id="game" type="text" list="gameList" maxlength="80" autocomplete="off" placeholder="e.g. Retro Bowl College">
+        <datalist id="gameList"></datalist>
+        <div class="match" id="match"><div class="thumb" id="matchThumb"></div><span id="matchText"></span><a class="btn" id="matchPlay">▶ Play</a></div>
+        <div class="err" id="gameErr">Type the name of the game.</div>
+      </div>
+
+      <div class="field" id="linkField">
+        <label for="link">Link to the game <span class="opt">(optional)</span></label>
+        <input id="link" type="url" maxlength="300" placeholder="https://…">
+      </div>
+
+      <div class="field">
+        <label for="details" id="detailsLabel">Anything else? <span class="opt">(optional)</span></label>
+        <textarea id="details" maxlength="1000" placeholder="Tell us more…"></textarea>
+        <div class="count"><span id="cnt">0</span>/1000</div>
+        <div class="err" id="detailsErr">Tell us a little more.</div>
+      </div>
+
+      <div class="field">
+        <label for="name">Your name <span class="opt">(optional)</span></label>
+        <input id="name" type="text" maxlength="40" placeholder="So we can shout you out">
+      </div>
+
+      <div class="hp" aria-hidden="true"><input id="website" type="text" tabindex="-1" autocomplete="off"></div>
+
+      <button class="btn submit" id="send" type="submit">Send request</button>
+      <div class="err" id="sendErr"></div>
+    </form>
+
+    <section class="mine" id="mineWrap" hidden>
+      <h2>Your requests</h2>
+      <ul id="mine"></ul>
+    </section>
+  </main>
+
+  <footer class="foot">ZZ Games</footer>
+  <iframe name="zzSink" id="zzSink" style="display:none" title=""></iframe>
+
+  <script src="games.js?v=202610141122"></script>
+  <script>
+  (() => {
+    const $ = (id) => document.getElementById(id);
+    const slug = (t) => t.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+    const norm = (t) => t.toLowerCase().replace(/[^a-z0-9]/g, "");
+    const MINE_KEY = "zz-requests";
+    const cfg = SITE.requestForm || {};
+    let type = "New game";
+
+    // Pre-fill from links like request.html?type=broken&game=Slope
+    const qs = new URLSearchParams(location.search);
+    if (qs.get("type") === "broken") type = "Broken game";
+    if (qs.get("game")) $("game").value = qs.get("game").slice(0, 80);
+
+    // Game suggestions
+    $("gameList").innerHTML = GAMES.map((g) => `<option value="${g.title.replace(/"/g, "&quot;")}">`).join("");
+
+    function setType(v) {
+      type = v;
+      document.querySelectorAll("#types button").forEach((b) => b.classList.toggle("on", b.dataset.v === v));
+      const isGame = v === "New game" || v === "Broken game";
+      $("gameField").hidden = !isGame;
+      $("linkField").hidden = v !== "New game";
+      $("gameLabel").textContent = v === "Broken game" ? "Which game is broken?" : "Game name";
+      $("game").placeholder = v === "Broken game" ? "Start typing a game on ZZ Games…" : "e.g. Retro Bowl College";
+      $("detailsLabel").innerHTML = v === "New game" ? 'Anything else? <span class="opt">(optional)</span>'
+        : v === "Broken game" ? "What's wrong with it?" : "Tell us your idea";
+      $("details").placeholder = v === "Broken game" ? "e.g. It's stuck on the loading screen on iPad" : "Tell us more…";
+      checkMatch();
+    }
+    document.querySelectorAll("#types button").forEach((b) => b.onclick = () => setType(b.dataset.v));
+
+    // "Already on ZZ Games" helper
+    function findGame() {
+      const q = norm($("game").value);
+      if (q.length < 3) return null;
+      return GAMES.find((g) => norm(g.title) === q) || GAMES.find((g) => q.length >= 4 && norm(g.title).startsWith(q));
+    }
+    function checkMatch() {
+      const g = type === "New game" ? findGame() : null;
+      $("match").classList.toggle("show", !!(g && g.url));
+      if (g && g.url) {
+        $("matchText").innerHTML = `<b></b> is already on ZZ Games!`;
+        $("matchText").querySelector("b").textContent = g.title;
+        $("matchThumb").style.backgroundImage = g.image ? `url('${g.image}')` : "linear-gradient(135deg,#1f6bff,#0a1142)";
+        $("matchPlay").href = `play.html?game=${slug(g.title)}`;
+      }
+    }
+    $("game").addEventListener("input", () => { checkMatch(); $("gameErr").classList.remove("show"); });
+    $("details").addEventListener("input", () => { $("cnt").textContent = $("details").value.length; $("detailsErr").classList.remove("show"); });
+
+    // Your requests (saved in this browser)
+    const getMine = () => { try { return JSON.parse(localStorage.getItem(MINE_KEY)) || []; } catch { return []; } };
+    function renderMine() {
+      const list = getMine();
+      $("mineWrap").hidden = !list.length;
+      $("mine").replaceChildren(...list.slice(0, 10).map((r) => {
+        const li = document.createElement("li");
+        li.innerHTML = `<span class="tag"></span><span class="what"></span><span class="when"></span>`;
+        li.querySelector(".tag").textContent = r.type;
+        li.querySelector(".what").textContent = r.game || r.details.slice(0, 60) || "—";
+        li.querySelector(".when").textContent = new Date(r.at).toLocaleDateString();
+        return li;
+      }));
+    }
+
+    // Send to Google Form (answers land in your Google Form responses)
+    function sendToGoogle(fields) {
+      return new Promise((resolve) => {
+        const f = document.createElement("form");
+        f.method = "POST"; f.target = "zzSink";
+        f.action = `https://docs.google.com/forms/d/e/${cfg.formId}/formResponse`;
+        for (const [k, v] of Object.entries(fields)) {
+          const i = document.createElement("input"); i.type = "hidden"; i.name = k; i.value = v; f.appendChild(i);
+        }
+        document.body.appendChild(f);
+        let done = false;
+        const finish = () => { if (!done) { done = true; f.remove(); resolve(); } };
+        $("zzSink").addEventListener("load", finish, { once: true });
+        setTimeout(finish, 4000);
+        f.submit();
+      });
+    }
+
+    $("form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      $("sendErr").classList.remove("show");
+      if ($("website").value) return; // bot
+      const game = $("game").value.trim(), link = $("link").value.trim(),
+            details = $("details").value.trim(), name = $("name").value.trim();
+      const needGame = type === "New game" || type === "Broken game";
+      let ok = true;
+      if (needGame && !game) { $("gameErr").classList.add("show"); ok = false; }
+      if (!needGame && details.length < 3) { $("detailsErr").classList.add("show"); ok = false; }
+      if (type === "Broken game" && details.length < 3) { $("detailsErr").classList.add("show"); ok = false; }
+      if (!ok) return;
+
+      const last = +localStorage.getItem("zz-req-last") || 0;
+      if (Date.now() - last < 30000) {
+        $("sendErr").textContent = "Slow down a little — try again in a few seconds.";
+        $("sendErr").classList.add("show"); return;
+      }
+
+      const device = /iPad|Macintosh/.test(navigator.userAgent) && navigator.maxTouchPoints > 0 ? "iPad"
+        : /iPhone|Android.+Mobile/.test(navigator.userAgent) ? "Phone" : /Android/.test(navigator.userAgent) ? "Tablet" : "Computer";
+      const summary = [
+        `Type: ${type}`,
+        needGame ? `Game: ${game}` : "",
+        link ? `Link: ${link}` : "",
+        details ? `Details: ${details}` : "",
+        `Name: ${name || "Anonymous"}`,
+        `Device: ${device}`,
+      ].filter(Boolean).join("\n");
+
+      $("send").disabled = true; $("send").textContent = "Sending…";
+
+      if (cfg.formId && cfg.entry) {
+        const fields = { [cfg.entry]: summary };
+        await sendToGoogle(fields);
+      } else {
+        // Not hooked up yet: copy the request and open the old form
+        try { await navigator.clipboard.writeText(summary); } catch {}
+        window.open(SITE.requestFormUrl, "_blank", "noopener");
+      }
+
+      try {
+        localStorage.setItem("zz-req-last", String(Date.now()));
+        localStorage.setItem(MINE_KEY, JSON.stringify([{ type, game, details, at: Date.now() }, ...getMine()].slice(0, 20)));
+      } catch {}
+
+      $("form").innerHTML = `
+        <div class="done">
+          <div class="big">✅</div>
+          <h2>Request sent!</h2>
+          <p>${cfg.entry ? "Thanks — we'll take a look." : "Your request was copied. Paste it into the form that just opened."}</p>
+          <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:16px">
+            <a class="btn" href="request.html">Send another</a>
+            <a class="btn ghost" href="index.html">Back to games</a>
+          </div>
+        </div>`;
+      renderMine();
+    });
+
+    setType(type);
+    renderMine();
+  })();
+  </script>
+</body>
+</html>

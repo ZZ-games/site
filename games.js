@@ -16,7 +16,13 @@
 const SITE = {
   name: "ZZ Games",
   githubUser: "ZZ-games",
-  requestFormUrl: "https://sites.google.com/view/zz-games-/feature-requests/request-form",
+  requestFormUrl: "https://sites.google.com/view/zz-games-/feature-requests/request-form", // old form (backup)
+  // The "Request a game" page sends answers to your Google Form.
+  // entry = the id of a paragraph question in that form, like "entry.123456789"
+  requestForm: {
+    formId: "1FAIpQLSd0h7sosVixXZReKPNzfyFqNyKTovBZYJb8LV_drExR1K6uAA",
+    entry: "",
+  },
 };
 
 const GAMES = [
