@@ -171,6 +171,7 @@ body.window-full .exit-full { display: block; }
 .seg button { background: none; border: 0; color: var(--muted); font: 600 .8rem Inter, sans-serif; padding: 7px 12px; border-radius: 999px; cursor: pointer; }
 .seg button.on { background: var(--accent); color: #fff; }
 .btn.small { padding: 6px 14px; font-size: .8rem; }
+.settings small { color: var(--muted); font-size: .75rem; }
 .settings .note { color: var(--muted); font-size: .75rem; margin: 6px 0 0; line-height: 1.4; }
 
 /* Reduce animations */

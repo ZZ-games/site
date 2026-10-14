@@ -45,7 +45,7 @@ function addRecent(id) {
 
 /* ---------------- Settings (saved in this browser) ---------------- */
 const SETTINGS_KEY = "zz-settings";
-const DEFAULTS = { volume: 80, muted: false, fullMode: "window", autoFull: false, showRecent: true, reduceMotion: false };
+const DEFAULTS = { volume: 80, muted: false, fullMode: "window", autoFull: false, showRecent: true, reduceMotion: false, desktopMode: "auto" };
 function getSettings() {
   try { return { ...DEFAULTS, ...JSON.parse(localStorage.getItem(SETTINGS_KEY)) }; } catch { return { ...DEFAULTS }; }
 }
@@ -81,11 +81,16 @@ function buildSettings() {
         <div class="seg" id="setFull">
           <button data-v="window">Browser window</button><button data-v="screen">Whole screen</button>
         </div></div>
+      <div class="row"><span>Desktop mode <small>(use a keyboard on iPad)</small></span>
+        <div class="seg" id="setDesk">
+          <button data-v="auto">Auto</button><button data-v="on">On</button><button data-v="off">Off</button>
+        </div></div>
       <label class="row toggle"><span>Start games in fullscreen</span><input id="setAuto" type="checkbox"></label>
       <label class="row toggle"><span>Show “Jump back in”</span><input id="setRecent" type="checkbox"></label>
       <label class="row toggle"><span>Reduce animations</span><input id="setMotion" type="checkbox"></label>
       <div class="row"><span>Recently played</span><button id="clearRecent" class="btn ghost small">Clear</button></div>
-      <p class="note">Settings save in this browser. Volume works on games hosted on ZZ Games; a few outside games (like Tung Tung Kart) use their own volume.</p>
+      <p class="note" id="deskNote" hidden>Desktop mode changed — press ↻ Restart to apply it to this game.</p>
+      <p class="note">Desktop mode makes games use keyboard controls instead of touch controls. Auto turns it on for iPads and tablets. Settings save in this browser. Volume works on games hosted on ZZ Games; a few outside games (like Tung Tung Kart) use their own volume.</p>
     </div>`;
   document.body.appendChild(panel);
   const $ = (s) => panel.querySelector(s);
@@ -94,6 +99,7 @@ function buildSettings() {
     $("#setMute").checked = S.muted; $("#setAuto").checked = S.autoFull;
     $("#setRecent").checked = S.showRecent; $("#setMotion").checked = S.reduceMotion;
     panel.querySelectorAll("#setFull button").forEach((b) => b.classList.toggle("on", b.dataset.v === S.fullMode));
+    panel.querySelectorAll("#setDesk button").forEach((b) => b.classList.toggle("on", b.dataset.v === S.desktopMode));
   };
   const open = () => { sync(); panel.hidden = false; };
   const close = () => { panel.hidden = true; };
@@ -107,6 +113,10 @@ function buildSettings() {
   $("#setRecent").onchange = (e) => { S.showRecent = e.target.checked; saveSettings(); };
   $("#setMotion").onchange = (e) => { S.reduceMotion = e.target.checked; saveSettings(); };
   panel.querySelectorAll("#setFull button").forEach((b) => b.onclick = () => { S.fullMode = b.dataset.v; sync(); saveSettings(); });
+  panel.querySelectorAll("#setDesk button").forEach((b) => b.onclick = () => {
+    S.desktopMode = b.dataset.v; sync(); saveSettings();
+    $("#deskNote").hidden = !document.body.classList.contains("play-page");
+  });
   $("#clearRecent").onclick = (e) => {
     try { localStorage.removeItem(RECENT_KEY); } catch {}
     e.target.textContent = "Cleared"; const w = document.getElementById("recentWrap"); if (w) w.hidden = true;
@@ -281,6 +291,33 @@ function initPlay() {
     if (e.key === "Escape" && document.body.classList.contains("window-full")) setWindowFull(false);
   });
   if (S.autoFull && g.url) setWindowFull(true);
+
+  // Keyboard: if the iPad/browser leaves focus on the page instead of the game,
+  // pass the keys into the game ourselves.
+  const settingsOpen = () => { const b = document.querySelector(".settings-backdrop"); return b && !b.hidden; };
+  const focusFrame = () => { try { frame.focus(); frame.contentWindow.focus(); } catch {} };
+  stage.addEventListener("pointerdown", focusFrame);
+  frame.addEventListener("load", () => setTimeout(focusFrame, 50));
+  const forward = (e) => {
+    if (!g.url || settingsOpen() || e.metaKey || e.key === "Escape") return;
+    if (document.activeElement === frame) return; // game already has the keyboard
+    const t = e.target; if (t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA")) return;
+    let w, d;
+    try { w = frame.contentWindow; d = w.document; } catch { focusFrame(); return; } // outside site: just focus
+    const target = (d.activeElement && d.activeElement !== d.body) ? d.activeElement : (d.querySelector("canvas") || d.body || d);
+    const ev = new w.KeyboardEvent(e.type, {
+      key: e.key, code: e.code, location: e.location, repeat: e.repeat,
+      shiftKey: e.shiftKey, ctrlKey: e.ctrlKey, altKey: e.altKey, bubbles: true, cancelable: true,
+    });
+    for (const k of ["keyCode", "which", "charCode"]) {
+      try { Object.defineProperty(ev, k, { get: () => e[k] }); } catch {}
+    }
+    target.dispatchEvent(ev);
+    e.preventDefault();
+    if (e.type === "keydown") focusFrame();
+  };
+  document.addEventListener("keydown", forward);
+  document.addEventListener("keyup", forward);
 
   // More games: same category first
   const more = GAMES.filter((x) => x.id !== g.id)
