@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Russo+One&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
   <link rel="icon" href="images/favicon.png">
-  <link rel="stylesheet" href="style.css?v=202610141130">
+  <link rel="stylesheet" href="style.css?v=202610200819">
   <style>
     .req-wrap { max-width: 720px; margin: 0 auto; }
     .req-hero { text-align: center; margin: 32px 0 8px; }
@@ -79,7 +79,7 @@
 
       <div class="field" id="gameField">
         <label for="game" id="gameLabel">Game name</label>
-        <input id="game" type="text" list="gameList" maxlength="80" autocomplete="off" placeholder="e.g. Retro Bowl College">
+        <input id="game" type="text" list="gameList" maxlength="80" autocomplete="off" placeholder="e.g. Smash Karts">
         <datalist id="gameList"></datalist>
         <div class="match" id="match"><div class="thumb" id="matchThumb"></div><span id="matchText"></span><a class="btn" id="matchPlay">▶ Play</a></div>
         <div class="err" id="gameErr">Type the name of the game.</div>
@@ -117,7 +117,7 @@
   <footer class="foot">ZZ Games</footer>
   <iframe name="zzSink" id="zzSink" style="display:none" title=""></iframe>
 
-  <script src="games.js?v=202610141130"></script>
+  <script src="games.js?v=202610200819"></script>
   <script>
   (() => {
     const $ = (id) => document.getElementById(id);
@@ -142,7 +142,7 @@
       $("gameField").hidden = !isGame;
       $("linkField").hidden = v !== "New game";
       $("gameLabel").textContent = v === "Broken game" ? "Which game is broken?" : "Game name";
-      $("game").placeholder = v === "Broken game" ? "Start typing a game on ZZ Games…" : "e.g. Retro Bowl College";
+      $("game").placeholder = v === "Broken game" ? "Start typing a game on ZZ Games…" : "e.g. Smash Karts";
       $("detailsLabel").innerHTML = v === "New game" ? 'Anything else? <span class="opt">(optional)</span>'
         : v === "Broken game" ? "What's wrong with it?" : "Tell us your idea";
       $("details").placeholder = v === "Broken game" ? "e.g. It's stuck on the loading screen on iPad" : "Tell us more…";
