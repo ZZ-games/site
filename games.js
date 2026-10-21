@@ -45,6 +45,7 @@ const GAMES = [
   { title: "Retro Bowl College", category: "Sports", repo: "Retro-Bowl-College", url: "games/retro-bowl-college/", image: "images/covers/retro-bowl-college.jpg" },
   { title: "Slow Roads", category: "Racing", repo: "slow-roads", url: "games/slow-roads/", image: "images/covers/slow-roads.jpg" },
   { title: "Krillion", category: "Puzzle", repo: "Open-Krillion.io", url: "games/krillion/", image: "images/covers/krillion.jpg" },
+  { title: "Crazy Cattle 3D", category: "Action", repo: "Crazy-Cattle-3D", url: "games/crazy-cattle-3d/", image: "images/covers/crazy-cattle-3d.jpg" },
   { title: "Summer Rider", category: "Racing", user: "zz126j", repo: "SummerRider", url: "games/summerrider/", image: "images/covers/summer-rider.jpg" },
   { title: "Ragdoll Archers", category: "Action", repo: "RagdollArchers", url: "games/ragdollarchers/", image: "images/covers/ragdoll-archers.jpg" },
   { title: "Rooftop Run", category: "Arcade", repo: "Rooftop-Run", url: "games/rooftop-run/", image: "images/covers/rooftop-run.jpg" },
