@@ -80,7 +80,7 @@ const GAMES = [
   { title: "Five Nights at Freddy's", category: "Action", repo: "FNAF", url: "games/fnaf/", image: "images/covers/five-nights-at-freddy-s.jpg" },
   { title: "Money Rush", category: "Arcade", repo: "Money-Rush", url: "games/money-rush/", image: "images/covers/money-rush.jpg" },
   { title: "Grass Mowing Simulator", category: "Other", repo: "Stone-Grass-Mowing-Simulator", url: "games/stone-grass-mowing-simulator/", image: "images/covers/grass-mowing-simulator.jpg" },
-  { title: "Elytra Flight", category: "Arcade", repo: "", url: "", image: "images/covers/elytra-flight.jpg" },
+  { title: "Elytra Flight", category: "Arcade", repo: "Elytra-Flight", url: "games/elytra-flight/", image: "images/covers/elytra-flight.jpg" },
   { title: "Crazy Motorcycle", category: "Racing", repo: "Crazy-Motercycle", url: "games/crazy-motercycle/", image: "images/covers/crazy-motorcycle.jpg" },
   { title: "Crossy Road", category: "Arcade", repo: "Crossy-Road", url: "games/crossy-road/", image: "images/covers/crossy-road.jpg" },
   { title: "Suika Game", category: "Puzzle", repo: "Suika-game", url: "games/suika-game/", image: "images/covers/suika-game.jpg" },
