@@ -44,6 +44,7 @@ const GAMES = [
     ] },
   { title: "Retro Bowl College", category: "Sports", repo: "Retro-Bowl-College", url: "games/retro-bowl-college/", image: "images/covers/retro-bowl-college.jpg" },
   { title: "Slow Roads", category: "Racing", repo: "slow-roads", url: "games/slow-roads/", image: "images/covers/slow-roads.jpg" },
+  { title: "Krillion", category: "Puzzle", repo: "Open-Krillion.io", url: "games/krillion/", image: "images/covers/krillion.jpg" },
   { title: "Summer Rider", category: "Racing", user: "zz126j", repo: "SummerRider", url: "games/summerrider/", image: "images/covers/summer-rider.jpg" },
   { title: "Ragdoll Archers", category: "Action", repo: "RagdollArchers", url: "games/ragdollarchers/", image: "images/covers/ragdoll-archers.jpg" },
   { title: "Rooftop Run", category: "Arcade", repo: "Rooftop-Run", url: "games/rooftop-run/", image: "images/covers/rooftop-run.jpg" },
@@ -100,6 +101,5 @@ const GAMES = [
   { title: "Highway Traffic 3D", category: "Racing", repo: "HighwayTraffic3D", url: "games/highwaytraffic3d/", image: "images/covers/highway-traffic-3d.jpg" },
   { title: "OvO", category: "Arcade", repo: "OvO", url: "games/ovo/", image: "images/covers/ovo.jpg" },
   { title: "Paper.io 2", category: "Arcade", repo: "Paperio2", url: "games/paperio2/", image: "images/covers/paper-io-2.jpg", imagePos: "center 20%" },
-  { title: "Krillion", category: "Puzzle", repo: "Open-Krillion.io", url: "games/krillion/", image: "images/covers/krillion.jpg" },
   { title: "Cookie Clicker", category: "Other", repo: "CookieClicker", url: "games/cookieclicker/", image: "images/covers/cookie-clicker.jpg" },
 ];
