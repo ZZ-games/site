@@ -152,9 +152,14 @@ function hookGameAudio(frame) {
     const media = () => { try { doc.querySelectorAll("audio,video").forEach((m) => { m.volume = level(); m.muted = S.muted; }); } catch {} };
     w.__zzApply = () => { gains.forEach((g) => { try { g.gain.value = level(); } catch {} }); media(); };
     w.setInterval(media, 1500);
-    // Esc inside the game still exits browser-window fullscreen
+    // Esc inside the game exits browser-window fullscreen, unless the game uses Esc itself
+    // (e.g. Minecraft's pause menu) or has the mouse locked.
     w.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" }));
+      if (e.key !== "Escape") return;
+      let locked = false; try { locked = !!w.document.pointerLockElement; } catch {}
+      setTimeout(() => {
+        if (!e.defaultPrevented && !locked) document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" }));
+      }, 0);
     });
   }
   // Catch the game's window as early as possible, before it starts making sound

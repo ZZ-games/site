@@ -11,6 +11,8 @@
   var isIPad = /iPad/.test(ua0) || (/Macintosh/.test(ua0) && navigator.maxTouchPoints > 0);
   var isAndroidTablet = /Android/.test(ua0) && !/Mobile/.test(ua0);
   var on = mode === "on" || (mode === "auto" && (isIPad || isAndroidTablet));
+  // Remember the real device before we disguise it (some games need to know, e.g. Minecraft)
+  window.__zzReal = { iPad: isIPad, touch: navigator.maxTouchPoints > 0 || "ontouchstart" in window, desktopMode: on };
 
   if (on) {
     var def = function (o, k, v) {
