@@ -94,5 +94,6 @@ const GAMES = [
   { title: "Tower Crash 3D", category: "Arcade", repo: "Tower-Crash-3d", url: "games/tower-crash-3d/", image: "images/covers/tower-crash-3d.jpg" },
   { title: "Highway Traffic 3D", category: "Racing", repo: "HighwayTraffic3D", url: "games/highwaytraffic3d/", image: "images/covers/highway-traffic-3d.jpg" },
   { title: "OvO", category: "Arcade", repo: "OvO", url: "games/ovo/", image: "images/covers/ovo.jpg" },
+  { title: "Paper.io 2", category: "Arcade", repo: "Paperio2", url: "games/paperio2/", image: "images/covers/paper-io-2.jpg", imagePos: "center 20%" },
   { title: "Cookie Clicker", category: "Other", repo: "CookieClicker", url: "games/cookieclicker/", image: "images/covers/cookie-clicker.jpg" },
 ];

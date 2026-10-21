@@ -8,7 +8,7 @@ GAMES.forEach((g) => {
 
 // Colorful generated cover when a game has no image
 function coverStyle(g) {
-  if (g.image) return `background-image:url('${g.image}')`;
+  if (g.image) return `background-image:url('${g.image}')${g.imagePos ? `;background-position:${g.imagePos}` : ""}`;
   let h = 0;
   for (const c of g.title) h = (h * 31 + c.charCodeAt(0)) % 360;
   const hue = 190 + (h % 90); // blues → purples to match the logo
