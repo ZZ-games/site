@@ -246,6 +246,36 @@ function initPlay() {
   }
   if (!g) { location.href = "index.html"; return; }
 
+  // Games with more than one version (e.g. Normal / Hacked)
+  let pickVersion = null;
+  if (g.versions && g.versions.length) {
+    g = { ...g };
+    const key = "zz-version-" + g.id;
+    let saved = null; try { saved = localStorage.getItem(key); } catch {}
+    const want = params.get("version") || saved;
+    let cur = g.versions.find((v) => v.label.toLowerCase() === String(want).toLowerCase()) || g.versions[0];
+    g.url = cur.url;
+    pickVersion = (wrap, onChange) => {
+      wrap.innerHTML = `<span class="vlabel">Version</span><div class="seg"></div><span class="vnote"></span>`;
+      const seg = wrap.querySelector(".seg"), note = wrap.querySelector(".vnote");
+      const paint = () => {
+        seg.querySelectorAll("button").forEach((b) => b.classList.toggle("on", b.textContent === cur.label));
+        note.textContent = cur.note || "";
+      };
+      g.versions.forEach((v) => {
+        const b = document.createElement("button"); b.textContent = v.label;
+        b.onclick = () => {
+          if (v === cur) return;
+          cur = v; g.url = v.url; paint();
+          try { localStorage.setItem(key, v.label); } catch {}
+          onChange();
+        };
+        seg.appendChild(b);
+      });
+      wrap.hidden = false; paint();
+    };
+  }
+
   document.title = `${g.title} · ${SITE.name}`;
   document.getElementById("gameTitle").textContent = g.title;
   if (!g.gamble) addRecent(g.id);
@@ -266,6 +296,7 @@ function initPlay() {
     loader.classList.remove("done");
     frame.src = g.url; startWatch();
   };
+  if (pickVersion) pickVersion(document.getElementById("versions"), () => document.getElementById("reload").onclick());
 
   // Fullscreen: "window" fills the browser tab, "screen" takes over the whole monitor
   const stage = document.getElementById("stage");

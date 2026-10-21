@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head><script src="../../zz-desktop.js"></script>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta http-equiv="pragma" content="no-cache"/>
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name ="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta charset="utf-8"/>
+        <title>Retro Bowl (Glitched)</title>
+        <link rel="shortcut icon" type="image/png" href="retro-bowl-logo.png">
+        <style>
+            body {
+              background: #000;
+              color:#cccccc;
+              margin: 0px;
+              padding: 0px;
+              border: 0px;
+              overflow: hidden;
+            }
+            canvas {
+                      image-rendering: optimizeSpeed;
+                      -webkit-interpolation-mode: nearest-neighbor;
+                      -ms-touch-action: none;
+                      margin: 0px;
+                      padding: 0px;
+                      border: 0px;
+            }
+            :-webkit-full-screen #canvas {
+                 width: 100%;
+                 height: 100%;
+            }
+            div.gm4html5_div_class
+            {
+              margin: 0px;
+              padding: 0px;
+              border: 0px;
+            }
+            /* START - Login Dialog Box */
+            div.gm4html5_login
+            {
+                 padding: 20px;
+                 position: absolute;
+                 border: solid 2px #000000;
+                 background-color: #404040;
+                 color:#00ff00;
+                 border-radius: 15px;
+                 box-shadow: #101010 20px 20px 40px;
+            }
+            div.gm4html5_cancel_button
+            {
+                 float: right;
+            }
+            div.gm4html5_login_button
+            {
+                 float: left;
+            }
+            div.gm4html5_login_header
+            {
+                 text-align: center;
+            }
+            /* END - Login Dialog Box */
+            :-webkit-full-screen {
+               width: 100%;
+               height: 100%;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div class="gm4html5_div_class" id="gm4html5_div_id">
+        <img src="html5game/splash.png" id="GM4HTML5_loadingscreen" alt="GameMaker:HTML5 loading screen" style="display:none;"/>
+            <!-- Create the canvas element the game draws to -->
+            <canvas id="canvas">
+                     <p>Your browser doesn't support HTML5 canvas.</p>
+            </canvas>
+            <script>
+                document.querySelector('canvas').width = window.innerWidth;
+                document.querySelector('canvas').height = window.innerHeight;
+            </script>
+        </div>
+
+        <!-- ZZ Games mod: glitched coaching credits (always 999, never spent) -->
+        <script>
+            (function(){
+                var CREDITS = 999;
+                Object.defineProperty(Object.prototype, "_Jl", {
+                    get: function(){ return CREDITS; },
+                    set: function(v){ /* spending does nothing */ },
+                    configurable: true
+                });
+            })();
+        </script>
+        <!-- Run the game code -->
+        <script type="text/javascript" src="html5game/RetroBowl.js"></script>
+        <script>window.onload = GameMaker_Init;</script>
+        <!-- ZZ Games fix: keep the game filling the window after resizing / fullscreen -->
+        <script>
+            (function(){
+                // Make the game itself render at the window's size (sharp pixels, no stretching).
+                var lastW = 0, lastH = 0;
+                function resizeGame(){
+                    var c = document.getElementById('canvas');
+                    if (!c || typeof _BV !== 'function') return;
+                    var W = window.innerWidth, H = window.innerHeight;
+                    if (window.__rbMatch) {
+                        if ((W !== lastW || H !== lastH) && typeof window.__rbResize === 'function') window.__rbResize();
+                    } else if (c.width !== W || c.height !== H) {
+                        _BV(W, H);
+                    }
+                    lastW = W; lastH = H;
+                }
+                window.addEventListener('resize', function(){ setTimeout(resizeGame, 50); });
+                setInterval(resizeGame, 500);
+
+                // Center the canvas; only shrink it if it is ever bigger than the window (never blur it by stretching).
+                var scale = 1, offX = 0, offY = 0;
+                function fit(){
+                    var c = document.getElementById('canvas');
+                    if (!c || !c.width || !c.height) return;
+                    var W = window.innerWidth, H = window.innerHeight;
+                    scale = Math.min(1, W / c.width, H / c.height);
+                    var w = Math.round(c.width * scale), h = Math.round(c.height * scale);
+                    offX = Math.round((W - w) / 2); offY = Math.round((H - h) / 2);
+                    var st = c.style, ws = w + 'px', hs = h + 'px', ls = offX + 'px', ts = offY + 'px';
+                    if (st.width !== ws || st.height !== hs || st.left !== ls || st.top !== ts || st.position !== 'fixed') {
+                        st.position = 'fixed'; st.width = ws; st.height = hs; st.left = ls; st.top = ts;
+                    }
+                }
+                // The game reads pageX/pageY in canvas pixels, so convert screen positions back into canvas pixels.
+                function conv(o){
+                    if (!o || o.__rbFixed || scale === 1) return;
+                    var px = o.pageX, py = o.pageY;
+                    try {
+                        Object.defineProperty(o, 'pageX', { value: offX + (px - offX) / scale, configurable: true });
+                        Object.defineProperty(o, 'pageY', { value: offY + (py - offY) / scale, configurable: true });
+                        o.__rbFixed = true;
+                    } catch (e) {}
+                }
+                function onEvt(e){
+                    conv(e);
+                    var lists = [e.touches, e.changedTouches, e.targetTouches];
+                    for (var i = 0; i < lists.length; i++) {
+                        var l = lists[i]; if (!l) continue;
+                        for (var j = 0; j < l.length; j++) conv(l[j]);
+                    }
+                }
+                ['mousedown','mouseup','mousemove','click','dblclick','touchstart','touchmove','touchend','touchcancel','pointerdown','pointerup','pointermove']
+                    .forEach(function(t){ window.addEventListener(t, onEvt, { capture: true, passive: true }); });
+                window.addEventListener('resize', fit);
+                (function loop(){ fit(); requestAnimationFrame(loop); })();
+            })();
+        </script>
+    </body>
+</html>

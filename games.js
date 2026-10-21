@@ -11,6 +11,7 @@
 //  image    – optional cover image, e.g. "images/slope.png"
 //             (leave "" and the site makes a colorful cover for you)
 //  featured – true puts it in the big banner at the top (pick one)
+//  versions – optional list of { label, url } to let players pick a version (see Retro Bowl)
 // ============================================================
 
 const SITE = {
@@ -36,7 +37,11 @@ const GAMES = [
   { title: "Cluster Rush", category: "Arcade", user: "zz126j", repo: "Cluster-Rush", url: "games/cluster-rush/", image: "images/covers/cluster-rush.jpg" },
   { title: "Drive Mad", category: "Racing", repo: "drive-mad", url: "games/drive-mad/", image: "images/covers/drive-mad.jpg" },
   { title: "Table Tennis World Tour", category: "Sports", repo: "Table-Tennis-World-Tour", url: "games/table-tennis-world-tour/", image: "images/covers/table-tennis-world-tour.jpg" },
-  { title: "Retro Bowl", category: "Sports", repo: "retro-bowl", url: "games/retro-bowl/", image: "images/covers/retro-bowl.jpg" },
+  { title: "Retro Bowl", category: "Sports", repo: "retro-bowl", url: "games/retro-bowl/", image: "images/covers/retro-bowl.jpg",
+    versions: [
+      { label: "Normal", url: "games/retro-bowl/" },
+      { label: "Hacked", url: "games/retro-bowl-glitched/", note: "999 coaching credits and free upgrades. Saves separately from Normal." },
+    ] },
   { title: "Retro Bowl College", category: "Sports", repo: "Retro-Bowl-College", url: "games/retro-bowl-college/", image: "images/covers/retro-bowl-college.jpg" },
   { title: "Slow Roads", category: "Racing", repo: "slow-roads", url: "games/slow-roads/", image: "images/covers/slow-roads.jpg" },
   { title: "Summer Rider", category: "Racing", user: "zz126j", repo: "SummerRider", url: "games/summerrider/", image: "images/covers/summer-rider.jpg" },

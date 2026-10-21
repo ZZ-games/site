@@ -148,6 +148,12 @@ body.window-full .stage {
 .exit-full:hover, .exit-full:focus { opacity: 1; }
 body.window-full .exit-full { display: block; }
 
+/* Version picker (e.g. Normal / Hacked) */
+.versions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
+.versions .vlabel { font-weight: 600; font-size: .85rem; color: var(--muted); }
+.versions .vnote { color: var(--muted); font-size: .8rem; }
+body.window-full .versions { display: none; }
+
 /* Settings */
 .icon-btn { padding: 8px 12px; font-size: 1.05rem; line-height: 1; }
 .settings-backdrop { position: fixed; inset: 0; z-index: 100; background: #000a; backdrop-filter: blur(4px); display: grid; place-items: center; padding: 16px; }
