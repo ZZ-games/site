@@ -63,7 +63,6 @@ function card(g) {
     <div class="meta"><div class="name"></div><div class="cat"></div></div>`;
   a.querySelector(".name").textContent = g.title;
   a.querySelector(".cat").textContent = g.category;
-  if (g.id) a.querySelector(".cover").appendChild(favButton(g));
   return a;
 }
 

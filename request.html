@@ -7,51 +7,54 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Russo+One&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
   <link rel="icon" href="images/favicon.png">
-  <link rel="stylesheet" href="style.css?v=202610212045">
+  <link rel="stylesheet" href="style.css?v=202610220913">
   <style>
-    .req-wrap { max-width: 720px; margin: 0 auto; }
-    .req-hero { text-align: center; margin: 32px 0 8px; }
-    .req-hero h1 { font-family: "Russo One", sans-serif; font-weight: 400; font-size: clamp(1.8rem, 6vw, 2.8rem); margin: 0;
-      background: linear-gradient(180deg, #bfe0ff, #5aa8ff 55%, #1f6bff); -webkit-background-clip: text; background-clip: text; color: transparent;
-      filter: drop-shadow(0 0 18px #1f6bff66); }
-    .req-hero p { color: var(--muted); margin: 8px 0 0; }
-    .req-card { margin-top: 24px; background: var(--panel); border: 1px solid #1f6bff44; border-radius: 20px; padding: clamp(18px, 4vw, 30px);
-      box-shadow: inset 0 0 60px #1f6bff12, 0 20px 60px #0007; }
-    .field { margin-bottom: 20px; }
-    .field > label, .field > .label { display: block; font-weight: 600; margin-bottom: 8px; }
-    .field .opt { color: var(--muted); font-weight: 400; font-size: .85rem; }
-    .types { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
-    .types button { background: #ffffff0a; border: 1px solid #ffffff1a; color: var(--text); border-radius: 14px; padding: 14px 8px; cursor: pointer;
-      font: 600 .85rem Inter, sans-serif; display: grid; gap: 6px; justify-items: center; transition: border-color .15s, background .15s; }
-    .types button .ic { font-size: 1.5rem; }
-    .types button:hover { border-color: var(--accent); }
-    .types button.on { background: #1f6bff2e; border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent) inset; }
+    .req-wrap { max-width: 640px; margin: 0 auto; }
+    .req-hero { margin: 40px 0 0; }
+    .req-hero h1 { font-family: "Russo One", sans-serif; font-weight: 400; font-size: clamp(1.7rem, 5vw, 2.3rem); margin: 0; letter-spacing: .3px; }
+    .req-hero p { color: var(--muted); margin: 8px 0 0; line-height: 1.5; }
+    .req-card { margin-top: 24px; background: var(--panel); border: 1px solid #ffffff12; border-radius: 16px; padding: clamp(20px, 4vw, 28px); }
+    .field { margin-bottom: 22px; }
+    .field > label, .field > .label { display: block; font-weight: 600; font-size: .9rem; margin-bottom: 8px; }
+    .field .opt { color: var(--muted); font-weight: 400; }
+    .types { display: flex; flex-wrap: wrap; gap: 4px; background: #01031f; border: 1px solid #ffffff14; border-radius: 12px; padding: 4px; }
+    .types button { flex: 1 1 0; min-width: 110px; background: none; border: 0; color: var(--muted); border-radius: 9px; padding: 10px 12px;
+      cursor: pointer; font: 600 .88rem Inter, sans-serif; transition: background .15s, color .15s; }
+    .types button:hover { color: var(--text); }
+    .types button.on { background: var(--accent); color: #fff; }
     .req-card input[type=text], .req-card input[type=url], .req-card textarea {
-      width: 100%; background: #01031f; color: var(--text); border: 1px solid #ffffff1f; border-radius: 12px;
-      padding: 12px 14px; font: inherit; outline: none; }
+      width: 100%; background: #01031f; color: var(--text); border: 1px solid #ffffff1a; border-radius: 10px;
+      padding: 12px 14px; font: inherit; font-size: .95rem; outline: none; transition: border-color .15s; }
+    .req-card input::placeholder, .req-card textarea::placeholder { color: #5f6b99; }
     .req-card input:focus, .req-card textarea:focus { border-color: var(--accent); }
-    .req-card textarea { min-height: 120px; resize: vertical; }
-    .count { color: var(--muted); font-size: .75rem; text-align: right; margin-top: 4px; }
-    .match { margin-top: 10px; display: none; align-items: center; gap: 12px; background: #0f7a3a22; border: 1px solid #2ecc7155;
-      border-radius: 12px; padding: 8px 10px; font-size: .88rem; }
+    .req-card textarea { min-height: 110px; resize: vertical; line-height: 1.5; }
+    .count { color: var(--muted); font-size: .72rem; text-align: right; margin-top: 4px; }
+    .match { margin-top: 10px; display: none; align-items: center; gap: 12px; background: #01031f; border: 1px solid #ffffff1a;
+      border-radius: 10px; padding: 8px 10px; font-size: .88rem; color: var(--muted); }
+    .match b { color: var(--text); }
     .match.show { display: flex; }
-    .match .thumb { width: 52px; height: 39px; border-radius: 8px; background-size: cover; background-position: center; flex-shrink: 0; }
+    .match .thumb { width: 48px; height: 36px; border-radius: 6px; background-size: cover; background-position: center; flex-shrink: 0; }
     .match .btn { margin-left: auto; padding: 7px 14px; font-size: .8rem; }
-    .err { color: #ff8a8a; font-size: .85rem; margin-top: 6px; display: none; }
+    .err { color: #ff8a8a; font-size: .82rem; margin-top: 6px; display: none; }
     .err.show { display: block; }
-    .submit { width: 100%; padding: 14px; font-size: 1rem; }
+    .submit { width: 100%; padding: 13px; font-size: .95rem; border-radius: 10px; margin-top: 4px; }
     .submit[disabled] { opacity: .6; cursor: default; transform: none; box-shadow: none; }
     .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
-    .done { text-align: center; padding: 20px 0 6px; }
-    .done .big { font-size: 3rem; }
-    .done h2 { margin: 6px 0; }
-    .done p { color: var(--muted); }
-    .mine { margin-top: 28px; }
-    .mine ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
-    .mine li { background: var(--panel); border: 1px solid #ffffff10; border-radius: 12px; padding: 10px 14px; display: flex; gap: 10px; align-items: center; font-size: .9rem; }
+    .done { text-align: center; padding: 16px 0 4px; }
+    .done .check { width: 52px; height: 52px; border-radius: 50%; margin: 0 auto 12px; display: grid; place-items: center;
+      background: #1f6bff22; border: 1px solid var(--accent); }
+    .done .check svg { width: 24px; height: 24px; stroke: var(--accent-2); }
+    .done h2 { margin: 0 0 6px; }
+    .done p { color: var(--muted); margin: 0; }
+    .mine { margin-top: 32px; }
+    .mine h2 { font-size: 1rem; margin: 0 0 10px; }
+    .mine ul { list-style: none; padding: 0; margin: 0; border: 1px solid #ffffff12; border-radius: 12px; overflow: hidden; }
+    .mine li { display: flex; gap: 12px; align-items: center; padding: 11px 14px; font-size: .9rem; background: var(--panel); }
+    .mine li + li { border-top: 1px solid #ffffff0d; }
+    .mine li .what { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .mine li .when { margin-left: auto; color: var(--muted); font-size: .75rem; white-space: nowrap; }
-    .mine li .tag { font-size: .7rem; font-weight: 800; letter-spacing: 1px; color: var(--accent-2); text-transform: uppercase; white-space: nowrap; }
-    @media (max-width: 640px) { .types { grid-template-columns: repeat(2, 1fr); } }
+    .mine li .tag { font-size: .72rem; font-weight: 600; color: var(--muted); white-space: nowrap; min-width: 84px; }
+    @media (max-width: 640px) { .types button { min-width: calc(50% - 4px); } }
   </style>
 </head>
 <body>
@@ -63,17 +66,17 @@
   <main class="req-wrap">
     <section class="req-hero">
       <h1>Request a game</h1>
-      <p>Want a new game, found one that's broken, or have an idea? Tell us.</p>
+      <p>Ask for a new game, report one that isn't working, or share an idea for the site.</p>
     </section>
 
     <form id="form" class="req-card" novalidate>
       <div class="field">
         <span class="label">What's this about?</span>
         <div class="types" id="types">
-          <button type="button" data-v="New game" class="on"><span class="ic">🎮</span>New game</button>
-          <button type="button" data-v="Broken game"><span class="ic">🛠️</span>Broken game</button>
-          <button type="button" data-v="Site idea"><span class="ic">💡</span>Site idea</button>
-          <button type="button" data-v="Other"><span class="ic">💬</span>Other</button>
+          <button type="button" data-v="New game" class="on">New game</button>
+          <button type="button" data-v="Broken game">Broken game</button>
+          <button type="button" data-v="Site idea">Site idea</button>
+          <button type="button" data-v="Other">Other</button>
         </div>
       </div>
 
@@ -117,7 +120,7 @@
   <footer class="foot">ZZ Games</footer>
   <iframe name="zzSink" id="zzSink" style="display:none" title=""></iframe>
 
-  <script src="games.js?v=202610212045"></script>
+  <script src="games.js?v=202610220913"></script>
   <script>
   (() => {
     const $ = (id) => document.getElementById(id);
@@ -250,8 +253,8 @@
 
       $("form").innerHTML = `
         <div class="done">
-          <div class="big">✅</div>
-          <h2>Request sent!</h2>
+          <div class="check"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
+          <h2>Request sent</h2>
           <p>${cfg.entry ? "Thanks — we'll take a look." : "Your request was copied. Paste it into the form that just opened."}</p>
           <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:16px">
             <a class="btn" href="request.html">Send another</a>
