@@ -90,7 +90,7 @@ function buildSettings() {
       <label class="row toggle"><span>Reduce animations</span><input id="setMotion" type="checkbox"></label>
       <div class="row"><span>Recently played</span><button id="clearRecent" class="btn ghost small">Clear</button></div>
       <p class="note" id="deskNote" hidden>Desktop mode changed — press ↻ Restart to apply it to this game.</p>
-      <p class="note">Desktop mode makes games use keyboard controls instead of touch controls. Auto turns it on for iPads and tablets. Settings save in this browser. Volume works on games hosted on ZZ Games; a few outside games (like Tung Tung Kart) use their own volume.</p>
+      <p class="note">Desktop mode makes games use keyboard controls instead of touch controls. Auto turns it on for iPads and tablets (Minecraft keeps its touch buttons unless Desktop mode is set to On). Settings save in this browser. Volume works on games hosted on ZZ Games; a few outside games (like Tung Tung Kart) use their own volume.</p>
     </div>`;
   document.body.appendChild(panel);
   const $ = (s) => panel.querySelector(s);
