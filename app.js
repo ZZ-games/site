@@ -276,6 +276,8 @@ function initHome() {
     document.getElementById("gridTitle").textContent =
       q ? `Results for “${search.value.trim()}”` : current === "All" ? "All games" : `${current} games`;
   }
+  const q0 = new URLSearchParams(location.search).get("q");
+  if (q0) search.value = q0.slice(0, 60);
   search.addEventListener("input", () => {
     if (search.value.trim().toLowerCase() === "ss") { location.href = "gamble.html"; return; }
     render();
@@ -325,7 +327,11 @@ function initPlay() {
     };
   }
 
-  document.title = `${g.title} · ${SITE.name}`;
+  document.title = g.gamble ? `${g.title} · ${SITE.name}` : `${g.title} Unblocked – Play Free on ZZ Games`;
+  if (!g.gamble) {
+    const md = document.querySelector('meta[name="description"]');
+    if (md) md.content = `Play ${g.title} unblocked for free on ZZ Games. No download – it runs right in your browser.`;
+  }
   document.getElementById("gameTitle").textContent = g.title;
   if (!g.gamble) {
     addRecent(g.id);
