@@ -16,6 +16,41 @@ function coverStyle(g) {
 }
 const initials = (t) => t.split(/\s+/).slice(0, 2).map((w) => w[0]).join("").toUpperCase();
 
+// Favorites (stored in this browser)
+const FAV_KEY = "zz-favs";
+function getFavs() {
+  try { return JSON.parse(localStorage.getItem(FAV_KEY)) || []; } catch { return []; }
+}
+const isFav = (id) => getFavs().includes(id);
+function toggleFav(id) {
+  const favs = getFavs();
+  const next = favs.includes(id) ? favs.filter((x) => x !== id) : [...favs, id];
+  try { localStorage.setItem(FAV_KEY, JSON.stringify(next)); } catch {}
+  document.querySelectorAll(`.fav[data-id="${id}"]`).forEach((b) => paintFav(b, next.includes(id)));
+  document.dispatchEvent(new CustomEvent("zz-favs"));
+}
+function paintFav(b, on) {
+  b.classList.toggle("on", on);
+  b.setAttribute("aria-pressed", on);
+  b.title = on ? "Remove from favorites" : "Add to favorites";
+  if (b.classList.contains("fav-btn")) b.innerHTML = (on ? "♥" : "♡") + `<span class="lbl"> ${on ? "Favorited" : "Favorite"}</span>`;
+  else b.textContent = on ? "♥" : "♡";
+}
+function favButton(g, big) {
+  const b = document.createElement("button");
+  b.type = "button";
+  b.className = big ? "btn ghost fav fav-btn" : "fav";
+  b.dataset.id = g.id;
+  b.setAttribute("aria-label", "Favorite " + g.title);
+  paintFav(b, isFav(g.id));
+  b.addEventListener("click", (e) => {
+    e.preventDefault(); e.stopPropagation();
+    toggleFav(g.id);
+    b.classList.remove("pop"); void b.offsetWidth; b.classList.add("pop");
+  });
+  return b;
+}
+
 function card(g) {
   const a = document.createElement("a");
   a.className = "card";
@@ -28,6 +63,7 @@ function card(g) {
     <div class="meta"><div class="name"></div><div class="cat"></div></div>`;
   a.querySelector(".name").textContent = g.title;
   a.querySelector(".cat").textContent = g.category;
+  if (g.id) a.querySelector(".cover").appendChild(favButton(g));
   return a;
 }
 
@@ -212,6 +248,15 @@ function initHome() {
     catBox.appendChild(b);
   });
 
+  // Favorites row (top of the page)
+  function renderFavs() {
+    const favs = getFavs().map((id) => GAMES.find((g) => g.id === id)).filter(Boolean);
+    document.getElementById("favWrap").hidden = !favs.length;
+    document.getElementById("favs").replaceChildren(...favs.map(card));
+  }
+  document.addEventListener("zz-favs", renderFavs);
+  renderFavs();
+
   // Recent
   const recent = getRecent().map((id) => GAMES.find((g) => g.id === id)).filter(Boolean);
   if (recent.length && S.showRecent) {
@@ -283,7 +328,10 @@ function initPlay() {
 
   document.title = `${g.title} · ${SITE.name}`;
   document.getElementById("gameTitle").textContent = g.title;
-  if (!g.gamble) addRecent(g.id);
+  if (!g.gamble) {
+    addRecent(g.id);
+    document.querySelector(".play-page .actions").prepend(favButton(g, true));
+  }
 
   const frame = document.getElementById("frame");
   const loader = document.getElementById("loader");
