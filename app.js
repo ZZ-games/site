@@ -215,7 +215,7 @@ function hookGameAudio(frame) {
 
 /* ---------------- Home page ---------------- */
 function initHome() {
-  document.title = SITE.name;
+  // (home page title is set in index.html)
   const req = document.getElementById("requestLink");
   req.href = "request.html";
 
