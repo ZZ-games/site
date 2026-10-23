@@ -29,7 +29,7 @@ const SITE = {
 const GAMES = [
   { title: "Tung Tung Kart", category: "Racing", user: "ZZ-Interactives", repo: "Tung-Tung-Kart", url: "https://tung-tung-kart.netlify.app/", image: "images/covers/tung-tung-kart.jpg", featured: true },
 
-  { title: "Minecraft", category: "Action", repo: "EaglerCraft", url: "games/eaglercraft/?v=202610212045", image: "images/covers/minecraft.jpg" },
+  { title: "Minecraft", category: "Action", repo: "EaglerCraft", url: "games/eaglercraft/?v=202610231130", image: "images/covers/minecraft.jpg" },
   { title: "Slope", category: "Arcade", repo: "Slope", url: "games/slope/", image: "images/covers/slope.jpg" },
   { title: "Geometry Dash Lite", category: "Arcade", repo: "geometry-dash", url: "", image: "images/covers/geometry-dash-lite.jpg" },
   { title: "Stickman Hook", category: "Arcade", repo: "Stickman-Hook", url: "games/stickman-hook/", image: "images/covers/stickman-hook.jpg" },
