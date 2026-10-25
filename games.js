@@ -103,5 +103,7 @@ const GAMES = [
   { title: "OvO", category: "Arcade", repo: "OvO", url: "games/ovo/", image: "images/covers/ovo.jpg" },
   { title: "Paper.io 2", category: "Arcade", repo: "Paperio2", url: "games/paperio2/", image: "images/covers/paper-io-2.jpg", imagePos: "center 20%" },
   { title: "Cookie Clicker", category: "Other", repo: "CookieClicker", url: "games/cookieclicker/", image: "images/covers/cookie-clicker.jpg" },
+  { title: "Knife Hit", category: "Arcade", repo: "Knife-Hit", url: "games/knife-hit/", image: "images/covers/knife-hit.jpg" },
+  { title: "Super Knife", category: "Action", repo: "Super-Knife", url: "games/super-knife/", image: "images/covers/super-knife.jpg" },
   { title: "Crazy Cattle 3D", category: "Action", repo: "Crazy-Cattle-3D", url: "games/crazy-cattle-3d/", image: "images/covers/crazy-cattle-3d.jpg" },
 ];
