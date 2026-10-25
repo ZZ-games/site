@@ -105,5 +105,6 @@ const GAMES = [
   { title: "Cookie Clicker", category: "Other", repo: "CookieClicker", url: "games/cookieclicker/", image: "images/covers/cookie-clicker.jpg" },
   { title: "Knife Hit", category: "Arcade", repo: "Knife-Hit", url: "games/knife-hit/", image: "images/covers/knife-hit.jpg" },
   { title: "Super Knife", category: "Action", repo: "Super-Knife", url: "games/super-knife/", image: "images/covers/super-knife.jpg" },
+  { title: "Contra", category: "Retro", repo: "Contra", url: "games/contra/", image: "images/covers/contra.jpg" },
   { title: "Crazy Cattle 3D", category: "Action", repo: "Crazy-Cattle-3D", url: "games/crazy-cattle-3d/", image: "images/covers/crazy-cattle-3d.jpg" },
 ];
