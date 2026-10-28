@@ -106,8 +106,8 @@ const GAMES = [
   { title: "Knife Hit", category: "Arcade", repo: "Knife-Hit", url: "games/knife-hit/", image: "images/covers/knife-hit-2.jpg" },
   { title: "Super Knife", category: "Action", repo: "Super-Knife", url: "games/super-knife/", image: "images/covers/super-knife-2.jpg" },
   { title: "Contra", category: "Retro", repo: "Contra", url: "games/contra/", image: "images/covers/contra.jpg" },
-  { title: "Candy Crush", category: "Puzzle", repo: "Candy-Crush", url: "games/candy-crush/", image: "images/covers/candy-crush.jpg" },
-  { title: "Chain Pop", category: "Puzzle", repo: "Chain-Pop", url: "games/chain-pop/", image: "images/covers/chain-pop.jpg" },
-  { title: "Idle Miner Tycoon", category: "Other", repo: "Idle-Miner-Tycoon", url: "games/idle-miner-tycoon/", image: "" },
+  { title: "Candy Crush", category: "Puzzle", repo: "Candy-Crush", url: "games/candy-crush/", image: "images/covers/candy-crush-2.jpg" },
+  { title: "Chain Pop", category: "Puzzle", repo: "Chain-Pop", url: "games/chain-pop/", image: "images/covers/chain-pop-2.jpg" },
+  { title: "Idle Miner Tycoon", category: "Other", repo: "Idle-Miner-Tycoon", url: "games/idle-miner-tycoon/", image: "images/covers/idle-miner-tycoon.jpg" },
   { title: "Crazy Cattle 3D", category: "Action", repo: "Crazy-Cattle-3D", url: "games/crazy-cattle-3d/", image: "images/covers/crazy-cattle-3d.jpg" },
 ];
