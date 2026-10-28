@@ -288,6 +288,9 @@ function initHome() {
 
 /* ---------------- Play page ---------------- */
 function initPlay() {
+  // Touch screens: stop Safari pinch / double-tap zoom on the play page (games handle their own touches)
+  document.addEventListener("gesturestart", (e) => e.preventDefault(), { passive: false });
+  document.addEventListener("dblclick", (e) => e.preventDefault(), { passive: false });
   const params = new URLSearchParams(location.search);
   const id = params.get("game");
   let g = GAMES.find((x) => x.id === id);

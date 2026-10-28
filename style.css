@@ -216,3 +216,9 @@ body.window-full .versions { display: none; }
   .stage { aspect-ratio: 3 / 4; }
   .grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
 }
+
+/* Play page on touch screens: no gray tap flash, no text selection / long-press menu, no double-tap zoom over the game */
+body.play-page { -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+.play-page .stage, .play-page .stage * {
+  -webkit-tap-highlight-color: transparent; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none;
+}

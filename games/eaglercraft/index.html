@@ -34,6 +34,7 @@ window.eaglercraftXOptsHints = {
 <style id="emc-style">
 html.emc-desktop #emc-game, html.emc-desktop #emc-gui{display:none!important;}
 #emc-root{position:fixed;inset:0;z-index:2147483000;pointer-events:none;display:none;font-family:"Courier New",monospace;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;}
+html.emc-on *:not(#emc-kbd){-webkit-user-select:none!important;user-select:none!important;-webkit-touch-callout:none!important;-webkit-tap-highlight-color:rgba(0,0,0,0)!important;}
 html.emc-on,html.emc-on body{touch-action:none;overscroll-behavior:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent;position:fixed;inset:0;}
 html.emc-on #emc-root{display:block;}
 #emc-root .emc-btn{position:absolute;pointer-events:auto;box-sizing:border-box;display:flex;align-items:center;justify-content:center;
@@ -57,6 +58,7 @@ html.emc-on #emc-root{display:block;}
   --p:0%;background:conic-gradient(rgba(255,255,255,.85) var(--p), rgba(255,255,255,.18) 0);
   -webkit-mask:radial-gradient(circle, transparent 27px, #000 28px);mask:radial-gradient(circle, transparent 27px, #000 28px);}
 #emc-ring.charging{display:block;animation:emc-fill var(--hold,380ms) linear forwards;}
+#emc-ring.using{display:block;--p:100%;background:conic-gradient(rgba(120,230,120,.9) var(--p), rgba(255,255,255,.18) 0);animation:emc-pulse .5s ease-in-out infinite alternate;}
 #emc-ring.breaking{display:block;--p:100%;animation:emc-pulse .5s ease-in-out infinite alternate;}
 @property --p{syntax:"<percentage>";inherits:false;initial-value:0%;}
 @keyframes emc-fill{from{--p:0%}to{--p:100%}}
@@ -337,7 +339,12 @@ function onStart(ev){
       rec.kind = "look";
       if(!ringOwner){ ringOwner = rec; setAim(rec, t.clientX, t.clientY); showRing(t.clientX, t.clientY, "charging"); }
       rec.timer = setTimeout(function(r){ return function(){
-        if(r.kind === "look" && r.moved < MOVE_TOL && ringOwner === r){ r.breaking = true; mDown(0); showRing(r.x, r.y, "breaking"); }
+        if(r.kind === "look" && r.moved < MOVE_TOL && ringOwner === r){
+          var u = 0; try{ u = window.__emcGame ? window.__emcGame.use() : 0; }catch(e){}
+          r.breaking = true;
+          if(u > 0){ r.btn = 2; mDown(2); showRing(r.x, r.y, "using"); }   // eat, drink, block or draw the bow
+          else { r.btn = 0; mDown(0); showRing(r.x, r.y, "breaking"); }    // break
+        }
       }; }(rec), HOLD_MS);
     }else{
       // GUI / menus: behave like a mouse. Two fingers = scroll.
@@ -400,7 +407,7 @@ function onEnd(ev){
     }else if(rec.kind === "btn"){ btnUp(rec.el, rec); }
     else if(rec.kind === "gui"){ mouseEv("mousemove", t.clientX, t.clientY, 0, 0, 0); mUp(rec.btn, t.clientX, t.clientY); }
     else if(rec.kind === "look" && locked){
-      if(rec.breaking){ mUp(0); clearAim(rec); }
+      if(rec.breaking){ mUp(rec.btn || 0); clearAim(rec); }
       else if(owned && rec.moved < MOVE_TOL){
         // tap: hit a mob if the finger is on one, otherwise place / use
         var hit = window.__emcGame ? window.__emcGame.hit() : -1;
@@ -534,6 +541,8 @@ document.addEventListener("touchmove", onMove, { passive:false, capture:true });
 document.addEventListener("touchend", onEnd, { passive:false, capture:true });
 document.addEventListener("touchcancel", onEnd, { passive:false, capture:true });
 document.addEventListener("gesturestart", function(e){ e.preventDefault(); }, { passive:false });
+document.addEventListener("selectstart", function(e){ if(!ui || e.target !== ui.kbd) e.preventDefault(); }, { passive:false });
+document.addEventListener("contextmenu", function(e){ e.preventDefault(); }, { passive:false });
 document.addEventListener("dblclick", function(e){ e.preventDefault(); }, { passive:false });
 window.addEventListener("load", function(){
   build();
@@ -547,7 +556,7 @@ window.eaglerMobileSetSensitivity = function(v){ sens = +v || sens; try{ localSt
 <!-- ===== end mobile controls ===== -->
 
 <script type="text/javascript">window.addEventListener("load", function(){ var l = document.getElementById("emc-loading"); if(l) l.remove(); });</script>
-<script type="text/javascript" src="classes.js?v=20261025"></script>
+<script type="text/javascript" src="classes.js?v=20261028"></script>
 </head>
 <body style="margin:0px;width:100vw;height:100vh;overflow:hidden;background:#000;" id="game_frame">
 <div id="emc-loading" style="position:fixed;inset:0;display:flex;align-items:center;justify-content:center;color:#ccc;font:20px sans-serif;background:#000;">Loading Minecraft&hellip;</div>
