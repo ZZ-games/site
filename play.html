@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Russo+One&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
   <link rel="icon" href="images/favicon.png">
-  <link rel="stylesheet" href="style.css?v=202610281615">
+  <link rel="stylesheet" href="style.css?v=202610281619">
 </head>
 <body class="play-page">
   <header class="topbar">
@@ -24,7 +24,7 @@
     <div id="versions" class="versions" hidden></div>
     <div id="stage" class="stage">
       <div id="loader" class="loader"><div class="spinner"></div><p>Loading game…</p></div>
-      <iframe id="frame" allow="fullscreen; autoplay; gamepad; clipboard-write" allowfullscreen></iframe>
+      <iframe id="frame" sandbox="allow-scripts allow-same-origin allow-forms allow-modals allow-pointer-lock allow-downloads allow-orientation-lock allow-presentation" allow="fullscreen; autoplay; gamepad; clipboard-write" allowfullscreen></iframe>
     </div>
     <p class="hint">Game not working? <a id="report" href="request.html?type=broken">Report a problem</a></p>
 
@@ -32,7 +32,7 @@
     <div id="more" class="grid small"></div>
   </main>
 
-  <script src="games.js?v=202610281615"></script>
-  <script src="app.js?v=202610281615"></script>
+  <script src="games.js?v=202610281619"></script>
+  <script src="app.js?v=202610281619"></script>
 </body>
 </html>

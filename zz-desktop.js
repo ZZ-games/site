@@ -71,4 +71,18 @@
     if (tag === "INPUT" || tag === "TEXTAREA" || (t && t.isContentEditable)) return;
     if ([32, 33, 34, 37, 38, 39, 40].indexOf(e.keyCode) > -1) e.preventDefault();
   }, { passive: false });
+
+  // Keep players on ZZ Games: games can't open other sites in new tabs or send the page away.
+  try {
+    var here = location.origin;
+    var isOwn = function (u) {
+      try { var x = new URL(u, location.href); return x.origin === here || x.protocol === "blob:" || x.protocol === "data:" || x.protocol === "about:"; } catch (e) { return false; }
+    };
+    var realOpen = window.open;
+    window.open = function (u) { if (!u || isOwn(u)) { try { return realOpen.apply(window, arguments); } catch (e) {} } return null; };
+    document.addEventListener("click", function (e) {
+      var a = e.target && e.target.closest && e.target.closest("a[href]");
+      if (a && !isOwn(a.href) && !/^(javascript:|#)/.test(a.getAttribute("href") || "")) { e.preventDefault(); e.stopImmediatePropagation(); }
+    }, true);
+  } catch (e) {}
 })();
