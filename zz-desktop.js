@@ -10,7 +10,9 @@
   var ua0 = navigator.userAgent || "";
   var isIPad = /iPad/.test(ua0) || (/Macintosh/.test(ua0) && navigator.maxTouchPoints > 0);
   var isAndroidTablet = /Android/.test(ua0) && !/Mobile/.test(ua0);
-  var on = mode === "on" || (mode === "auto" && (isIPad || isAndroidTablet));
+  // Games with their own touch controls opt out of the disguise: <script src="../../zz-desktop.js" data-zz-touch>
+  var keepTouch = !!(document.currentScript && document.currentScript.hasAttribute("data-zz-touch"));
+  var on = mode === "on" || (mode === "auto" && (isIPad || isAndroidTablet) && !keepTouch);
   // Remember the real device before we disguise it (some games need to know, e.g. Minecraft)
   window.__zzReal = { iPad: isIPad, touch: navigator.maxTouchPoints > 0 || "ontouchstart" in window, desktopMode: on };
 
