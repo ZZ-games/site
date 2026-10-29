@@ -110,5 +110,8 @@ const GAMES = [
   { title: "Chain Pop", category: "Puzzle", repo: "Chain-Pop", url: "games/chain-pop/", image: "images/covers/chain-pop-2.jpg" },
   { title: "Idle Miner Tycoon", category: "Other", repo: "Idle-Miner-Tycoon", url: "games/idle-miner-tycoon/", image: "images/covers/idle-miner-tycoon.jpg" },
   { title: "Time Shooter 2", category: "Action", repo: "Time-Shooter-2", url: "games/time-shooter-2/", image: "images/covers/time-shooter-2.jpg" },
+  { title: "Hill Climb Racing", category: "Racing", repo: "Hill-Climb", url: "games/hill-climb/", image: "images/covers/hill-climb.jpg" },
+  { title: "Jetpack Joyride", category: "Arcade", repo: "Jetpack-Joyride", url: "games/jetpack-joyride/", image: "images/covers/jetpack-joyride.jpg" },
+  { title: "Stick Merge", category: "Action", repo: "Stick-Merge", url: "games/stick-merge/", image: "images/covers/stick-merge.jpg" },
   { title: "Crazy Cattle 3D", category: "Action", repo: "Crazy-Cattle-3D", url: "games/crazy-cattle-3d/", image: "images/covers/crazy-cattle-3d.jpg" },
 ];
