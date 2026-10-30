@@ -57,7 +57,7 @@ const GAMES = [
   { title: "Snow Rider", category: "Racing", user: "zz126j", repo: "SnowRider", url: "games/snowrider/", image: "images/covers/snow-rider.jpg" },
   { title: "PolyTrack", category: "Racing", repo: "polytrack2", url: "games/polytrack2/", image: "images/covers/polytrack.jpg" },
   { title: "Drift Boss", category: "Racing", repo: "Drift-Boss", url: "games/drift-boss/", image: "images/covers/drift-boss.jpg", imagePos: "8% center" },
-  { title: "Subway Surfers", category: "Arcade", repo: "subway-surfers", url: "", image: "images/covers/subway-surfers.jpg" },
+  { title: "Subway Surfers", category: "Arcade", repo: "subway-surfers", url: "games/subway-surfers/", image: "images/covers/subway-surfers.jpg" },
   { title: "Apple Worm", category: "Puzzle", repo: "Apple-Worm", url: "games/apple-worm/", image: "images/covers/apple-worm.jpg" },
   { title: "Escape Road", category: "Racing", repo: "Escape-Road", url: "games/escape-road/", image: "images/covers/escape-road.jpg" },
   { title: "Hole.io", category: "Arcade", repo: "Hole.io", url: "games/hole-io/", image: "images/covers/hole-io.jpg" },
