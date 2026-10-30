@@ -113,5 +113,8 @@ const GAMES = [
   { title: "Hill Climb Racing", category: "Racing", repo: "Hill-Climb", url: "games/hill-climb/", image: "images/covers/hill-climb.jpg" },
   { title: "Jetpack Joyride", category: "Arcade", repo: "Jetpack-Joyride", url: "games/jetpack-joyride/", image: "images/covers/jetpack-joyride.jpg" },
   { title: "Stick Merge", category: "Action", repo: "Stick-Merge", url: "games/stick-merge/", image: "images/covers/stick-merge.jpg" },
+  { title: "Soccer Random", category: "Sports", repo: "Soccer-Random", url: "games/soccer-random/", image: "images/covers/soccer-random.jpg" },
+  { title: "Volley Random", category: "Sports", repo: "Volley-Random", url: "games/volley-random/", image: "images/covers/volley-random.jpg" },
+  { title: "Boxing Random", category: "Sports", repo: "Boxing-Random", url: "games/boxing-random/", image: "images/covers/boxing-random.jpg" },
   { title: "Crazy Cattle 3D", category: "Action", repo: "Crazy-Cattle-3D", url: "games/crazy-cattle-3d/", image: "images/covers/crazy-cattle-3d.jpg" },
 ];
