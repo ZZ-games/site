@@ -35,6 +35,9 @@ const GAMES = [
   { title: "Stickman Hook", category: "Arcade", repo: "Stickman-Hook", url: "games/stickman-hook/", image: "images/covers/stickman-hook.jpg" },
   { title: "Block Blasts", category: "Puzzle", repo: "Block-Blast", url: "games/block-blast/", image: "images/covers/block-blasts.jpg" },
   { title: "Basket Random", category: "Sports", repo: "Basket-Random", url: "games/basket-random/", image: "images/covers/basket-random.jpg" },
+  { title: "Soccer Random", category: "Sports", repo: "Soccer-Random", url: "games/soccer-random/", image: "images/covers/soccer-random-2.jpg" },
+  { title: "Volley Random", category: "Sports", repo: "Volley-Random", url: "games/volley-random/", image: "images/covers/volley-random-2.jpg" },
+  { title: "Boxing Random", category: "Sports", repo: "Boxing-Random", url: "games/boxing-random/", image: "images/covers/boxing-random-2.jpg" },
   { title: "Cluster Rush", category: "Arcade", user: "zz126j", repo: "Cluster-Rush", url: "games/cluster-rush/", image: "images/covers/cluster-rush.jpg" },
   { title: "Drive Mad", category: "Racing", repo: "drive-mad", url: "games/drive-mad/", image: "images/covers/drive-mad.jpg" },
   { title: "Table Tennis World Tour", category: "Sports", repo: "Table-Tennis-World-Tour", url: "games/table-tennis-world-tour/", image: "images/covers/table-tennis-world-tour.jpg" },
@@ -113,8 +116,5 @@ const GAMES = [
   { title: "Hill Climb Racing", category: "Racing", repo: "Hill-Climb", url: "games/hill-climb/", image: "images/covers/hill-climb.jpg" },
   { title: "Jetpack Joyride", category: "Arcade", repo: "Jetpack-Joyride", url: "games/jetpack-joyride/", image: "images/covers/jetpack-joyride.jpg" },
   { title: "Stick Merge", category: "Action", repo: "Stick-Merge", url: "games/stick-merge/", image: "images/covers/stick-merge.jpg" },
-  { title: "Soccer Random", category: "Sports", repo: "Soccer-Random", url: "games/soccer-random/", image: "images/covers/soccer-random-2.jpg" },
-  { title: "Volley Random", category: "Sports", repo: "Volley-Random", url: "games/volley-random/", image: "images/covers/volley-random-2.jpg" },
-  { title: "Boxing Random", category: "Sports", repo: "Boxing-Random", url: "games/boxing-random/", image: "images/covers/boxing-random-2.jpg" },
   { title: "Crazy Cattle 3D", category: "Action", repo: "Crazy-Cattle-3D", url: "games/crazy-cattle-3d/", image: "images/covers/crazy-cattle-3d.jpg" },
 ];
