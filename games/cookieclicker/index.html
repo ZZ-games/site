@@ -1,6 +1,12 @@
 ﻿<!DOCTYPE html>
 <html>
-  <head><script src="../../zz-desktop.js"></script>
+  <head><link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="app-icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Cookie Clicker">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<script src="../../zz-desktop.js"></script>
     <!-- external -->
 
     <!--<link href="https://fonts.googleapis.com/css?family=Kavoon&subset=latin,latin-ext" rel="stylesheet" type="text/css">-->
@@ -207,5 +213,14 @@
         <div id="preloadImages" style="display: none;"></div>
       </div>
     </div>
-  </body>
+  
+<script>
+/* Offline: register the ZZ Games service worker and save all game files, even when this page is opened directly (installed app). */
+(function(){try{if(!("serviceWorker" in navigator))return;
+navigator.serviceWorker.register("../../sw.js").then(function(){return navigator.serviceWorker.ready}).then(function(reg){
+ fetch("offline-manifest.json").then(function(r){return r.json()}).then(function(files){
+  var base=new URL("./",location.href).href; if(reg.active) reg.active.postMessage({type:"precache",base:base,files:files});}).catch(function(){});
+}).catch(function(){});}catch(e){}})();
+</script>
+</body>
 </html>
