@@ -425,3 +425,15 @@ function initPlay() {
 buildSettings();
 applySettings();
 if (document.body.classList.contains("play-page")) initPlay(); else initHome();
+
+// Offline support: remember the site, and save Cookie Clicker for offline play.
+if ("serviceWorker" in navigator && location.protocol === "https:" || location.hostname === "localhost" || location.hostname === "127.0.0.1") {
+  try {
+    navigator.serviceWorker.register("sw.js").then(() => navigator.serviceWorker.ready).then((reg) => {
+      const q = new URLSearchParams(location.search).get("game");
+      if (q !== "cookie-clicker" || !reg.active) return;
+      const base = new URL("games/cookieclicker/", location.href).href;
+      fetch(base + "offline-manifest.json").then((r) => r.json()).then((files) => reg.active.postMessage({ type: "precache", base, files })).catch(() => {});
+    }).catch(() => {});
+  } catch (e) {}
+}
