@@ -34,6 +34,7 @@ const GAMES = [
   { title: "Geometry Dash Lite", category: "Arcade", repo: "geometry-dash", url: "", image: "images/covers/geometry-dash-lite.jpg" },
   { title: "Stickman Hook", category: "Arcade", repo: "Stickman-Hook", url: "games/stickman-hook/", image: "images/covers/stickman-hook.jpg" },
   { title: "Block Blasts", category: "Puzzle", repo: "Block-Blast", url: "games/block-blast/", image: "images/covers/block-blasts.jpg" },
+  { title: "Redline Rush", category: "Racing", repo: "Redline-Rush", url: "games/redline-rush/", image: "images/covers/redline-rush.jpg" },
   { title: "Basket Random", category: "Sports", repo: "Basket-Random", url: "games/basket-random/", image: "images/covers/basket-random.jpg" },
   { title: "Cluster Rush", category: "Arcade", user: "zz126j", repo: "Cluster-Rush", url: "games/cluster-rush/", image: "images/covers/cluster-rush.jpg" },
   { title: "Drive Mad", category: "Racing", repo: "drive-mad", url: "games/drive-mad/", image: "images/covers/drive-mad.jpg" },
