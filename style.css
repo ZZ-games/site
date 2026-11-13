@@ -432,3 +432,7 @@ body.window-full .game-bar, body.window-full .more-col { display: none; }
   .brand-slide { padding-bottom: 34px; }
   .brand-sub { font-size: .8rem; }
 }
+
+/* Bigger ZZ GAMES logo in the spotlight */
+.brand-slide .brand { width: min(760px, 94%); }
+@media (max-width: 640px) { .brand-slide .brand { width: 96%; } }

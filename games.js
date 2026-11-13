@@ -43,7 +43,7 @@ const GAMES = [
   { title: "Cluster Rush", category: "Arcade", user: "zz126j", repo: "Cluster-Rush", url: "games/cluster-rush/", image: "images/covers/cluster-rush.jpg" },
   { title: "Drive Mad", category: "Racing", repo: "drive-mad", url: "games/drive-mad/", image: "images/covers/drive-mad.jpg" },
   { title: "Table Tennis World Tour", category: "Sports", repo: "Table-Tennis-World-Tour", url: "games/table-tennis-world-tour/", image: "images/covers/table-tennis-world-tour.jpg" },
-  { title: "Retro Bowl", category: "Sports", repo: "retro-bowl", url: "games/retro-bowl/", image: "images/covers/retro-bowl.jpg", featured: true, hot: true, tags: "rb football",
+  { title: "Retro Bowl", category: "Sports", repo: "retro-bowl", url: "games/retro-bowl/", image: "images/covers/retro-bowl.jpg", featured: true, hot: true, tags: "rb football", pick: true,
     versions: [
       { label: "Normal", url: "games/retro-bowl/" },
       { label: "Hacked", url: "games/retro-bowl-glitched/", note: "999 coaching credits and free upgrades. Saves separately from Normal." },
@@ -61,7 +61,7 @@ const GAMES = [
   { title: "Moto Road Rash 3D", category: "Racing", repo: "MotoRoadRash3D", url: "", image: "images/covers/moto-road-rash-3d.jpg" },
   { title: "Survival Race", category: "Racing", repo: "Survival-Race", url: "games/survival-race/", image: "images/covers/survival-race.jpg" },
   { title: "PolyTrack", category: "Racing", repo: "polytrack2", url: "games/polytrack2/", image: "images/covers/polytrack.jpg" },
-  { title: "Drift Boss", category: "Racing", repo: "Drift-Boss", url: "games/drift-boss/", image: "images/covers/drift-boss.jpg", imagePos: "8% center", hot: true, pick: true },
+  { title: "Drift Boss", category: "Racing", repo: "Drift-Boss", url: "games/drift-boss/", image: "images/covers/drift-boss.jpg", imagePos: "8% center", hot: true },
   { title: "Subway Surfers", category: "Arcade", repo: "subway-surfers", url: "games/subway-surfers/", image: "images/covers/subway-surfers.jpg", hot: true, pick: true },
   { title: "Apple Worm", category: "Puzzle", repo: "Apple-Worm", url: "games/apple-worm/", image: "images/covers/apple-worm.jpg" },
   { title: "Escape Road", category: "Racing", repo: "Escape-Road", url: "games/escape-road/", image: "images/covers/escape-road.jpg" },

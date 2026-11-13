@@ -141,7 +141,7 @@ function buildSettings() {
           <button data-v="auto">Auto</button><button data-v="on">On</button><button data-v="off">Off</button>
         </div></div>
       <label class="row toggle"><span>Start games in fullscreen</span><input id="setAuto" type="checkbox"></label>
-      <label class="row toggle"><span>Show “Jump back in”</span><input id="setRecent" type="checkbox"></label>
+      <label class="row toggle"><span>Show “Continue playing”</span><input id="setRecent" type="checkbox"></label>
       <label class="row toggle"><span>Reduce animations</span><input id="setMotion" type="checkbox"></label>
       <div class="row"><span>Recently played</span><button id="clearRecent" class="btn ghost small">Clear</button></div>
       <p class="note" id="deskNote" hidden>Desktop mode changed — press ↻ Restart to apply it to this game.</p>
@@ -333,8 +333,6 @@ function initHome() {
   document.addEventListener("zz-favs", renderFavs);
   renderFavs();
   if (S.showRecent) fill("recentWrap", "recent", byIds(getRecent()));
-  fill("hotWrap", "hot", GAMES.filter((g) => g.hot && g.url));
-  fill("newWrap", "new", GAMES.filter((g) => g.new && g.url));
   const rows = document.getElementById("rows");
   cats.filter((c) => c !== "All").forEach((c) => {
     const list = GAMES.filter((g) => g.category === c && g.url);
