@@ -64,9 +64,8 @@ function card(g, opts = {}) {
       ${g.url ? badgeFor(g) : `<span class="soon">NO LINK YET</span>`}
       <span class="play-ov" aria-hidden="true"><span>▶</span></span>
     </div>
-    <div class="meta"><div class="name"></div><div class="cat"></div></div>`;
+    <div class="meta"><div class="name"></div></div>`;
   a.querySelector(".name").textContent = g.title;
-  a.querySelector(".cat").textContent = g.category;
   a.querySelector(".cover").appendChild(favButton(g));
   return a;
 }
@@ -288,7 +287,7 @@ function initHome() {
   picks.forEach((g) => {
     const a = document.createElement("a");
     a.className = "pick"; a.href = `play.html?game=${g.id}`;
-    a.innerHTML = `<div class="pick-art" style="${coverStyle(g)}"></div><div class="pick-meta"><div class="pick-name"></div><div class="pick-cat">${g.category}</div></div><span class="pick-play">▶</span>`;
+    a.innerHTML = `<div class="pick-art" style="${coverStyle(g)}"></div><div class="pick-meta"><div class="pick-name"></div></div><span class="pick-play">▶</span>`;
     a.querySelector(".pick-name").textContent = g.title;
     side.appendChild(a);
   });
@@ -301,7 +300,7 @@ function initHome() {
     const b = document.createElement("button");
     b.type = "button";
     const n = c === "All" ? GAMES.length : GAMES.filter((g) => g.category === c).length;
-    b.innerHTML = `<span class="ci">${CAT_ICONS[c] || "🎮"}</span>${c}<span class="cn">${n}</span>`;
+    b.innerHTML = `<span class="ci">${CAT_ICONS[c] || "🎮"}</span>${c}`;
     if (c === "All") b.classList.add("on");
     b.onclick = () => {
       current = c;
@@ -324,6 +323,17 @@ function initHome() {
   if (S.showRecent) fill("recentWrap", "recent", byIds(getRecent()));
   fill("hotWrap", "hot", GAMES.filter((g) => g.hot && g.url));
   fill("newWrap", "new", GAMES.filter((g) => g.new && g.url));
+  const rows = document.getElementById("rows");
+  cats.filter((c) => c !== "All").forEach((c) => {
+    const list = GAMES.filter((g) => g.category === c && g.url);
+    if (list.length < 5) return;
+    const sec = document.createElement("section");
+    sec.className = "row-wrap";
+    sec.innerHTML = `<div class="row-head"><h2>${CAT_ICONS[c] || ""} ${c}</h2><button type="button" class="see-all">See all</button></div><div class="rail"></div>`;
+    sec.querySelector(".rail").replaceChildren(...list.map((g) => card(g)));
+    sec.querySelector(".see-all").onclick = () => [...catBox.querySelectorAll("button")].find((b) => b.textContent.trim().endsWith(c)).click();
+    rows.appendChild(sec);
+  });
   // Arrow buttons for rails on desktop
   document.querySelectorAll(".row-wrap").forEach((w) => {
     const rail = w.querySelector(".rail"), head = w.querySelector(".row-head");
@@ -350,7 +360,7 @@ function initHome() {
     document.getElementById("emptyRequest").href = `request.html${q ? "?game=" + encodeURIComponent(q) : ""}`;
     document.getElementById("gridTitle").textContent =
       q ? `Results for “${q}”` : current === "All" ? "All games" : `${CAT_ICONS[current] || ""} ${current} games`;
-    document.getElementById("gridCount").textContent = list.length ? `${list.length} game${list.length === 1 ? "" : "s"}` : "";
+    document.getElementById("gridCount").textContent = q && list.length ? `${list.length} found` : "";
   }
   const q0 = new URLSearchParams(location.search).get("q");
   if (q0) search.value = q0.slice(0, 60);
@@ -366,8 +376,7 @@ function initHome() {
     if (e.key === "/" && document.activeElement !== search && !e.metaKey && !e.ctrlKey) { e.preventDefault(); search.focus(); }
   });
   document.getElementById("randomBtn").onclick = () => { const g = randomGame(); if (g) location.href = `play.html?game=${g.id}`; };
-  document.getElementById("count").textContent = GAMES.length;
-  search.placeholder = `Search ${GAMES.length} games…`;
+
   render();
 }
 

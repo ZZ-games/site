@@ -361,3 +361,45 @@ body.window-full .game-bar, body.window-full .more-col { display: none; }
   .game-bar-actions .btn { flex: 1; }
   .spot-side { display: none; }
 }
+
+/* =========================================================
+   Color system (from Engagement Playbook §47 hierarchy, §51 contrast,
+   §52 badges, §54 tiles, §84 accessibility)
+   - Blue  = brand + "where you are" (selected category, focus, links)
+   - Gold  = the ONE "go" color: every Play action, nothing else
+   - Red   = HOT, Mint = NEW (badges only, never buttons)
+   All text pairs pass WCAG AA (4.5:1+).
+   ========================================================= */
+:root { --play: #ffc93c; --play-2: #ffb000; --play-ink: #1a1200; --hot: #d4251a; --new: #19d48a; }
+
+.big-btn, .play-page #full {
+  background: linear-gradient(180deg, var(--play), var(--play-2)); color: var(--play-ink);
+  box-shadow: 0 8px 28px #ffb00055; font-weight: 800;
+}
+.slide:hover .big-btn, .play-page #full:hover { box-shadow: 0 10px 34px #ffb00099; }
+.play-ov span { background: linear-gradient(180deg, var(--play), var(--play-2)); color: var(--play-ink); box-shadow: 0 6px 24px #ffb00088; }
+.pick:hover .pick-play { background: var(--play); color: var(--play-ink); }
+.badge.hot { background: var(--hot); color: #fff; }
+.badge.new { background: var(--new); color: #00261a; }
+.card:hover { border-color: #ffc93c88; box-shadow: 0 10px 30px #00000080, 0 0 0 1px #ffc93c44; }
+.slide-tag { color: var(--play); }
+
+/* Denser grid = more games on screen at once */
+.grid { grid-template-columns: repeat(auto-fill, minmax(138px, 1fr)); gap: 12px; }
+.rail { grid-auto-columns: 140px; gap: 12px; }
+.card .meta { padding: 8px 10px 10px; }
+.card .name { font-size: .86rem; }
+.grid.mosaic .card.big .name { font-size: 1rem; }
+.more-col .grid.small { gap: 10px; }
+
+.see-all { margin-left: auto; background: none; border: 0; color: var(--accent-2); font: 600 .85rem Inter, sans-serif; cursor: pointer; padding: 6px 8px; }
+.see-all:hover { color: #fff; }
+.see-all + .rail-nav { margin-left: 4px; }
+.foot a { color: var(--accent-2); text-decoration: underline; }
+@media (max-width: 640px) {
+  .grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .grid.mosaic .card.big { grid-column: span 3; }
+  .card .name { font-size: .78rem; }
+  .card .meta { padding: 6px 8px 8px; }
+  .rail { grid-auto-columns: 112px; gap: 8px; }
+}
