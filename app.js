@@ -415,7 +415,7 @@ function initPlay() {
     };
   }
 
-  document.title = g.gamble ? `${g.title} · ${SITE.name}` : `${g.title} Unblocked – Play Free on ZZ Games`;
+  document.title = "ZZ Classroom"; // tab disguise (change on every page's <head> too)
   if (!g.gamble) {
     const md = document.querySelector('meta[name="description"]');
     if (md) md.content = `Play ${g.title} unblocked for free on ZZ Games. No download – it runs right in your browser.`;
