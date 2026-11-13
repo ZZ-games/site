@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Russo+One&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
   <link rel="icon" href="images/favicon.png">
-  <link rel="stylesheet" href="style.css?v=202611111725">
+  <link rel="stylesheet" href="style.css?v=202611131610">
 </head>
 <body class="play-page">
   <header class="topbar">
@@ -20,19 +20,34 @@
     </div>
   </header>
 
-  <main class="stage-wrap">
-    <div id="versions" class="versions" hidden></div>
-    <div id="stage" class="stage">
-      <div id="loader" class="loader"><div class="spinner"></div><p>Loading game…</p></div>
-      <iframe id="frame" sandbox="allow-scripts allow-same-origin allow-forms allow-modals allow-pointer-lock allow-downloads allow-orientation-lock allow-presentation" allow="fullscreen; autoplay; gamepad; clipboard-write" allowfullscreen></iframe>
+  <main class="stage-wrap play-layout">
+    <div class="play-col">
+      <div id="versions" class="versions" hidden></div>
+      <div id="stage" class="stage">
+        <div id="loader" class="loader"><div class="spinner"></div><p>Loading game…</p></div>
+        <iframe id="frame" sandbox="allow-scripts allow-same-origin allow-forms allow-modals allow-pointer-lock allow-downloads allow-orientation-lock allow-presentation" allow="fullscreen; autoplay; gamepad; clipboard-write" allowfullscreen></iframe>
+      </div>
+      <div class="game-bar">
+        <div id="gameArt" class="game-art"></div>
+        <div class="game-info">
+          <div id="gameName" class="game-name"></div>
+          <div id="gameCat" class="game-cat"></div>
+        </div>
+        <div class="game-bar-actions">
+          <button id="share" class="btn ghost small" type="button">🔗 Copy link</button>
+          <button id="nextRandom" class="btn ghost small" type="button">🎲 Random game</button>
+        </div>
+      </div>
+      <p class="hint">Game not working? <a id="report" href="request.html?type=broken">Report a problem</a></p>
     </div>
-    <p class="hint">Game not working? <a id="report" href="request.html?type=broken">Report a problem</a></p>
 
-    <h2>More games</h2>
-    <div id="more" class="grid small"></div>
+    <aside class="more-col">
+      <h2>More games</h2>
+      <div id="more" class="grid small"></div>
+    </aside>
   </main>
 
-  <script src="games.js?v=202611111725"></script>
-  <script src="app.js?v=202611111725"></script>
+  <script src="games.js?v=202611131610"></script>
+  <script src="app.js?v=202611131610"></script>
 </body>
 </html>

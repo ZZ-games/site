@@ -10,7 +10,10 @@
 //  url      – OR paste a full link instead (any site) — url wins if both are set
 //  image    – optional cover image, e.g. "images/slope.png"
 //             (leave "" and the site makes a colorful cover for you)
-//  featured – true puts it in the big banner at the top (pick one)
+//  featured – true puts it in the rotating spotlight at the top (pick a few)
+//  hot      – true gives it a HOT badge, a big tile, and a spot in the Hot row
+//  new      – true gives it a NEW badge and a spot in the New row
+//  tags     – extra search words, e.g. "gd" for Geometry Dash
 //  versions – optional list of { label, url } to let players pick a version (see Retro Bowl)
 // ============================================================
 
@@ -27,19 +30,19 @@ const SITE = {
 };
 
 const GAMES = [
-  { title: "Tung Tung Kart", category: "Racing", user: "ZZ-Interactives", repo: "Tung-Tung-Kart", url: "https://tung-tung-kart.netlify.app/", image: "images/covers/tung-tung-kart.jpg", featured: true },
+  { title: "Tung Tung Kart", category: "Racing", user: "ZZ-Interactives", repo: "Tung-Tung-Kart", url: "https://tung-tung-kart.netlify.app/", image: "images/covers/tung-tung-kart.jpg", hot: true, featured: true },
 
-  { title: "Minecraft", category: "Action", repo: "EaglerCraft", url: "games/eaglercraft/?v=20261028", image: "images/covers/minecraft.jpg" },
-  { title: "Slope", category: "Arcade", repo: "Slope", url: "games/slope/", image: "images/covers/slope.jpg" },
-  { title: "Geometry Dash Lite", category: "Arcade", repo: "geometry-dash", url: "", image: "images/covers/geometry-dash-lite.jpg" },
+  { title: "Minecraft", category: "Action", repo: "EaglerCraft", url: "games/eaglercraft/?v=20261028", image: "images/covers/minecraft.jpg", featured: true, hot: true, tags: "mc eaglercraft" },
+  { title: "Slope", category: "Arcade", repo: "Slope", url: "games/slope/", image: "images/covers/slope.jpg", hot: true },
+  { title: "Geometry Dash Lite", category: "Arcade", repo: "geometry-dash", url: "", image: "images/covers/geometry-dash-lite.jpg", tags: "gd" },
   { title: "Stickman Hook", category: "Arcade", repo: "Stickman-Hook", url: "games/stickman-hook/", image: "images/covers/stickman-hook.jpg" },
   { title: "Block Blasts", category: "Puzzle", repo: "Block-Blast", url: "games/block-blast/", image: "images/covers/block-blasts.jpg" },
-  { title: "Redline Rush", category: "Racing", repo: "Redline-Rush", url: "games/redline-rush/", image: "images/covers/redline-rush.jpg" },
+  { title: "Redline Rush", category: "Racing", repo: "Redline-Rush", url: "games/redline-rush/", image: "images/covers/redline-rush.jpg", featured: true, new: true },
   { title: "Basket Random", category: "Sports", repo: "Basket-Random", url: "games/basket-random/", image: "images/covers/basket-random.jpg" },
   { title: "Cluster Rush", category: "Arcade", user: "zz126j", repo: "Cluster-Rush", url: "games/cluster-rush/", image: "images/covers/cluster-rush.jpg" },
   { title: "Drive Mad", category: "Racing", repo: "drive-mad", url: "games/drive-mad/", image: "images/covers/drive-mad.jpg" },
   { title: "Table Tennis World Tour", category: "Sports", repo: "Table-Tennis-World-Tour", url: "games/table-tennis-world-tour/", image: "images/covers/table-tennis-world-tour.jpg" },
-  { title: "Retro Bowl", category: "Sports", repo: "retro-bowl", url: "games/retro-bowl/", image: "images/covers/retro-bowl.jpg",
+  { title: "Retro Bowl", category: "Sports", repo: "retro-bowl", url: "games/retro-bowl/", image: "images/covers/retro-bowl.jpg", featured: true, hot: true, tags: "rb football",
     versions: [
       { label: "Normal", url: "games/retro-bowl/" },
       { label: "Hacked", url: "games/retro-bowl-glitched/", note: "999 coaching credits and free upgrades. Saves separately from Normal." },
@@ -57,8 +60,8 @@ const GAMES = [
   { title: "Moto Road Rash 3D", category: "Racing", repo: "MotoRoadRash3D", url: "", image: "images/covers/moto-road-rash-3d.jpg" },
   { title: "Survival Race", category: "Racing", repo: "Survival-Race", url: "games/survival-race/", image: "images/covers/survival-race.jpg" },
   { title: "PolyTrack", category: "Racing", repo: "polytrack2", url: "games/polytrack2/", image: "images/covers/polytrack.jpg" },
-  { title: "Drift Boss", category: "Racing", repo: "Drift-Boss", url: "games/drift-boss/", image: "images/covers/drift-boss.jpg", imagePos: "8% center" },
-  { title: "Subway Surfers", category: "Arcade", repo: "subway-surfers", url: "games/subway-surfers/", image: "images/covers/subway-surfers.jpg" },
+  { title: "Drift Boss", category: "Racing", repo: "Drift-Boss", url: "games/drift-boss/", image: "images/covers/drift-boss.jpg", imagePos: "8% center", hot: true },
+  { title: "Subway Surfers", category: "Arcade", repo: "subway-surfers", url: "games/subway-surfers/", image: "images/covers/subway-surfers.jpg", hot: true },
   { title: "Apple Worm", category: "Puzzle", repo: "Apple-Worm", url: "games/apple-worm/", image: "images/covers/apple-worm.jpg" },
   { title: "Escape Road", category: "Racing", repo: "Escape-Road", url: "games/escape-road/", image: "images/covers/escape-road.jpg" },
   { title: "Hole.io", category: "Arcade", repo: "Hole.io", url: "games/hole-io/", image: "images/covers/hole-io.jpg" },
@@ -69,7 +72,7 @@ const GAMES = [
   { title: "Super Liquid Soccer", category: "Sports", repo: "Super-Liquid-Soccer", url: "games/super-liquid-soccer/", image: "images/covers/super-liquid-soccer.jpg" },
   { title: "Wrestle Bros", category: "Sports", repo: "WrestleBros", url: "games/wrestlebros/", image: "images/covers/wrestle-bros.jpg" },
   { title: "Ramp Car vs Police", category: "Racing", user: "zz126j", repo: "Ramp-Car-vs-Police", url: "games/ramp-car-vs-police/", image: "images/covers/ramp-car-vs-police.jpg" },
-  { title: "Basketball Stars", category: "Sports", repo: "Basketball-Stars", url: "games/basketball-stars/", image: "images/covers/basketball-stars.jpg" },
+  { title: "Basketball Stars", category: "Sports", repo: "Basketball-Stars", url: "games/basketball-stars/", image: "images/covers/basketball-stars.jpg", hot: true },
   { title: "Draw Climber", category: "Puzzle", repo: "Draw-Climber", url: "games/draw-climber/", image: "images/covers/draw-climber.jpg" },
   { title: "Blaze Drifter", category: "Racing", repo: "Blaze-Drifters-", url: "games/blaze-drifters/", image: "images/covers/blaze-drifter.jpg" },
   { title: "Mad Pursuit", category: "Racing", user: "zz126j", repo: "Mad-Pursuit", url: "games/mad-pursuit/", image: "images/covers/mad-pursuit.jpg" },
@@ -88,7 +91,7 @@ const GAMES = [
   { title: "Jetski Race", category: "Racing", repo: "Jetski-Race", url: "games/jetski-race/", image: "images/covers/jetski-race.jpg" },
   { title: "Tall.io", category: "Arcade", repo: "tall-io", url: "games/tall-io/", image: "images/covers/tall-io.jpg" },
   { title: "Crazy Plane Landing", category: "Arcade", repo: "Crazy-Plane-Landing", url: "games/crazy-plane-landing/", image: "images/covers/crazy-plane-landing.jpg" },
-  { title: "Five Nights at Freddy's", category: "Action", repo: "FNAF", url: "games/fnaf/", image: "images/covers/five-nights-at-freddy-s.jpg" },
+  { title: "Five Nights at Freddy's", category: "Action", repo: "FNAF", url: "games/fnaf/", image: "images/covers/five-nights-at-freddy-s.jpg", tags: "fnaf" },
   { title: "Money Rush", category: "Arcade", repo: "Money-Rush", url: "games/money-rush/", image: "images/covers/money-rush.jpg" },
   { title: "Grass Mowing Simulator", category: "Other", repo: "Stone-Grass-Mowing-Simulator", url: "games/stone-grass-mowing-simulator/", image: "images/covers/grass-mowing-simulator.jpg" },
   { title: "Elytra Flight", category: "Arcade", repo: "Elytra-Flight", url: "games/elytra-flight/", image: "images/covers/elytra-flight.jpg" },
@@ -105,17 +108,17 @@ const GAMES = [
   { title: "Tower Crash 3D", category: "Arcade", repo: "Tower-Crash-3d", url: "games/tower-crash-3d/", image: "images/covers/tower-crash-3d.jpg" },
   { title: "Highway Traffic 3D", category: "Racing", repo: "HighwayTraffic3D", url: "games/highwaytraffic3d/", image: "images/covers/highway-traffic-3d.jpg" },
   { title: "OvO", category: "Arcade", repo: "OvO", url: "games/ovo/", image: "images/covers/ovo.jpg" },
-  { title: "Paper.io 2", category: "Arcade", repo: "Paperio2", url: "games/paperio2/", image: "images/covers/paper-io-2.jpg", imagePos: "center 20%" },
+  { title: "Paper.io 2", category: "Arcade", repo: "Paperio2", url: "games/paperio2/", image: "images/covers/paper-io-2.jpg", imagePos: "center 20%", hot: true },
   { title: "Cookie Clicker", category: "Other", repo: "CookieClicker", url: "games/cookieclicker/", image: "images/covers/cookie-clicker.jpg" },
   { title: "Knife Hit", category: "Arcade", repo: "Knife-Hit", url: "games/knife-hit/", image: "images/covers/knife-hit-2.jpg" },
   { title: "Super Knife", category: "Action", repo: "Super-Knife", url: "games/super-knife/", image: "images/covers/super-knife-2.jpg" },
-  { title: "Contra", category: "Retro", repo: "Contra", url: "games/contra/", image: "images/covers/contra.jpg" },
-  { title: "Candy Crush", category: "Puzzle", repo: "Candy-Crush", url: "games/candy-crush/", image: "images/covers/candy-crush-2.jpg" },
-  { title: "Chain Pop", category: "Puzzle", repo: "Chain-Pop", url: "games/chain-pop/", image: "images/covers/chain-pop-2.jpg" },
-  { title: "Idle Miner Tycoon", category: "Other", repo: "Idle-Miner-Tycoon", url: "games/idle-miner-tycoon/", image: "images/covers/idle-miner-tycoon.jpg" },
-  { title: "Time Shooter 2", category: "Action", repo: "Time-Shooter-2", url: "games/time-shooter-2/", image: "images/covers/time-shooter-2.jpg" },
-  { title: "Hill Climb Racing", category: "Racing", repo: "Hill-Climb", url: "games/hill-climb/", image: "images/covers/hill-climb.jpg" },
-  { title: "Jetpack Joyride", category: "Arcade", repo: "Jetpack-Joyride", url: "games/jetpack-joyride/", image: "images/covers/jetpack-joyride.jpg" },
-  { title: "Stick Merge", category: "Action", repo: "Stick-Merge", url: "games/stick-merge/", image: "images/covers/stick-merge.jpg" },
-  { title: "Crazy Cattle 3D", category: "Action", repo: "Crazy-Cattle-3D", url: "games/crazy-cattle-3d/", image: "images/covers/crazy-cattle-3d.jpg" },
+  { title: "Contra", category: "Retro", repo: "Contra", url: "games/contra/", image: "images/covers/contra.jpg", new: true },
+  { title: "Candy Crush", category: "Puzzle", repo: "Candy-Crush", url: "games/candy-crush/", image: "images/covers/candy-crush-2.jpg", new: true },
+  { title: "Chain Pop", category: "Puzzle", repo: "Chain-Pop", url: "games/chain-pop/", image: "images/covers/chain-pop-2.jpg", new: true },
+  { title: "Idle Miner Tycoon", category: "Other", repo: "Idle-Miner-Tycoon", url: "games/idle-miner-tycoon/", image: "images/covers/idle-miner-tycoon.jpg", new: true },
+  { title: "Time Shooter 2", category: "Action", repo: "Time-Shooter-2", url: "games/time-shooter-2/", image: "images/covers/time-shooter-2.jpg", new: true },
+  { title: "Hill Climb Racing", category: "Racing", repo: "Hill-Climb", url: "games/hill-climb/", image: "images/covers/hill-climb.jpg", new: true },
+  { title: "Jetpack Joyride", category: "Arcade", repo: "Jetpack-Joyride", url: "games/jetpack-joyride/", image: "images/covers/jetpack-joyride.jpg", new: true },
+  { title: "Stick Merge", category: "Action", repo: "Stick-Merge", url: "games/stick-merge/", image: "images/covers/stick-merge.jpg", new: true },
+  { title: "Crazy Cattle 3D", category: "Action", repo: "Crazy-Cattle-3D", url: "games/crazy-cattle-3d/", image: "images/covers/crazy-cattle-3d.jpg", new: true, featured: true },
 ];

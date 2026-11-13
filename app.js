@@ -51,19 +51,41 @@ function favButton(g, big) {
   return b;
 }
 
-function card(g) {
+const CAT_ICONS = { All: "🎮", Racing: "🏎️", Sports: "🏀", Arcade: "🕹️", Action: "⚔️", Puzzle: "🧩", Retro: "👾", Other: "✨" };
+const badgeFor = (g) => g.new ? `<span class="badge new">NEW</span>` : g.hot ? `<span class="badge hot">HOT</span>` : "";
+
+function card(g, opts = {}) {
   const a = document.createElement("a");
-  a.className = "card";
+  a.className = "card" + (opts.big ? " big" : "");
   a.href = `play.html?game=${g.id}`;
   a.innerHTML = `
     <div class="cover" style="${coverStyle(g)}">
       ${g.image ? "" : `<span class="initials">${initials(g.title)}</span>`}
-      ${g.url ? "" : `<span class="soon">NO LINK YET</span>`}
+      ${g.url ? badgeFor(g) : `<span class="soon">NO LINK YET</span>`}
+      <span class="play-ov" aria-hidden="true"><span>▶</span></span>
     </div>
     <div class="meta"><div class="name"></div><div class="cat"></div></div>`;
   a.querySelector(".name").textContent = g.title;
   a.querySelector(".cat").textContent = g.category;
+  a.querySelector(".cover").appendChild(favButton(g));
   return a;
+}
+
+// Rough search: ignores spaces/punctuation, matches initials ("gd") and tags ("mc")
+const norm = (s) => String(s || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+function matches(g, q) {
+  if (!q) return true;
+  const n = norm(q);
+  if (!n) return true;
+  if (norm(g.title).includes(n)) return true;
+  if (initials(g.title).toLowerCase() === n || g.title.split(/\s+/).map((w) => w[0]).join("").toLowerCase().startsWith(n) && n.length > 1) return true;
+  if (g.tags && g.tags.toLowerCase().split(/\s+/).some((t) => norm(t).startsWith(n))) return true;
+  if (norm(g.category) === n) return true;
+  return false;
+}
+function randomGame(exceptId) {
+  const pool = GAMES.filter((g) => g.url && g.id !== exceptId);
+  return pool[Math.floor(Math.random() * pool.length)];
 }
 
 // Recently played (stored in this browser)
@@ -215,66 +237,120 @@ function hookGameAudio(frame) {
 
 /* ---------------- Home page ---------------- */
 function initHome() {
-  // (home page title is set in index.html)
-  const req = document.getElementById("requestLink");
-  req.href = "request.html";
+  const search = document.getElementById("search");
 
-  // Hero
-  const f = GAMES.find((g) => g.featured && g.url) || GAMES.find((g) => g.url && g.image) || GAMES.find((g) => g.url) || GAMES[0];
-  const hero = document.getElementById("hero");
-  hero.innerHTML = `
-    <img class="brand" src="images/logo.png" alt="${SITE.name}">
-    <div class="featured">
-      <div class="thumb" style="${coverStyle(f)}">${f.image ? "" : initials(f.title)}</div>
-      <div><div class="tag">FEATURED</div><div class="t"></div></div>
-      <a class="btn" href="play.html?game=${f.id}">▶ Play</a>
-    </div>`;
-  hero.querySelector(".t").textContent = f.title;
+  // Spotlight: rotating featured games + "top picks" beside it
+  const feat = GAMES.filter((g) => g.featured && g.url);
+  if (!feat.length) feat.push(GAMES.find((g) => g.url) || GAMES[0]);
+  const picks = GAMES.filter((g) => g.hot && g.url && !g.featured).slice(0, 3);
+  const spot = document.getElementById("spotlight");
+  spot.innerHTML = `
+    <div class="spot-main">
+      <div class="spot-slides"></div>
+      <div class="spot-dots" role="tablist"></div>
+    </div>
+    <div class="spot-side"><div class="spot-side-title">Top picks</div></div>`;
+  const slides = spot.querySelector(".spot-slides"), dots = spot.querySelector(".spot-dots");
+  feat.forEach((g, i) => {
+    const s = document.createElement("a");
+    s.className = "slide" + (i === 0 ? " on" : "");
+    s.href = `play.html?game=${g.id}`;
+    s.innerHTML = `
+      <div class="slide-bg" style="${coverStyle(g)}"></div>
+      <div class="slide-art" style="${coverStyle(g)}"></div>
+      <div class="slide-info">
+        <div class="slide-tag">${g.new ? "NEW · " : ""}FEATURED · ${g.category.toUpperCase()}</div>
+        <div class="slide-title"></div>
+        <span class="btn big-btn">▶ Play now</span>
+      </div>`;
+    s.querySelector(".slide-title").textContent = g.title;
+    slides.appendChild(s);
+    const d = document.createElement("button");
+    d.type = "button"; d.setAttribute("aria-label", "Show " + g.title);
+    if (i === 0) d.classList.add("on");
+    d.onclick = () => { show(i); restart(); };
+    dots.appendChild(d);
+  });
+  let cur = 0, timer = null;
+  function show(i) {
+    cur = (i + feat.length) % feat.length;
+    slides.querySelectorAll(".slide").forEach((el, j) => el.classList.toggle("on", j === cur));
+    dots.querySelectorAll("button").forEach((el, j) => el.classList.toggle("on", j === cur));
+  }
+  function restart() {
+    clearInterval(timer);
+    if (feat.length > 1 && !S.reduceMotion) timer = setInterval(() => show(cur + 1), 6000);
+  }
+  spot.querySelector(".spot-main").addEventListener("mouseenter", () => clearInterval(timer));
+  spot.querySelector(".spot-main").addEventListener("mouseleave", restart);
+  restart();
+  const side = spot.querySelector(".spot-side");
+  picks.forEach((g) => {
+    const a = document.createElement("a");
+    a.className = "pick"; a.href = `play.html?game=${g.id}`;
+    a.innerHTML = `<div class="pick-art" style="${coverStyle(g)}"></div><div class="pick-meta"><div class="pick-name"></div><div class="pick-cat">${g.category}</div></div><span class="pick-play">▶</span>`;
+    a.querySelector(".pick-name").textContent = g.title;
+    side.appendChild(a);
+  });
 
-  // Categories
+  // Categories (with counts)
   const cats = ["All", ...new Set(GAMES.map((g) => g.category))];
   const catBox = document.getElementById("cats");
   let current = "All";
   cats.forEach((c) => {
     const b = document.createElement("button");
-    b.textContent = c;
+    b.type = "button";
+    const n = c === "All" ? GAMES.length : GAMES.filter((g) => g.category === c).length;
+    b.innerHTML = `<span class="ci">${CAT_ICONS[c] || "🎮"}</span>${c}<span class="cn">${n}</span>`;
     if (c === "All") b.classList.add("on");
     b.onclick = () => {
       current = c;
       catBox.querySelectorAll("button").forEach((x) => x.classList.toggle("on", x === b));
       render();
+      if (c !== "All") document.getElementById("gridTitle").scrollIntoView({ behavior: S.reduceMotion ? "auto" : "smooth", block: "start" });
     };
     catBox.appendChild(b);
   });
 
-  // Favorites row (top of the page)
-  function renderFavs() {
-    const favs = getFavs().map((id) => GAMES.find((g) => g.id === id)).filter(Boolean);
-    document.getElementById("favWrap").hidden = !favs.length;
-    document.getElementById("favs").replaceChildren(...favs.map(card));
-  }
+  // Rows
+  const fill = (wrapId, boxId, list) => {
+    document.getElementById(wrapId).hidden = !list.length;
+    document.getElementById(boxId).replaceChildren(...list.map((g) => card(g)));
+  };
+  const byIds = (ids) => ids.map((id) => GAMES.find((g) => g.id === id)).filter(Boolean);
+  function renderFavs() { fill("favWrap", "favs", byIds(getFavs())); }
   document.addEventListener("zz-favs", renderFavs);
   renderFavs();
-
-  // Recent
-  const recent = getRecent().map((id) => GAMES.find((g) => g.id === id)).filter(Boolean);
-  if (recent.length && S.showRecent) {
-    document.getElementById("recentWrap").hidden = false;
-    recent.forEach((g) => document.getElementById("recent").appendChild(card(g)));
-  }
+  if (S.showRecent) fill("recentWrap", "recent", byIds(getRecent()));
+  fill("hotWrap", "hot", GAMES.filter((g) => g.hot && g.url));
+  fill("newWrap", "new", GAMES.filter((g) => g.new && g.url));
+  // Arrow buttons for rails on desktop
+  document.querySelectorAll(".row-wrap").forEach((w) => {
+    const rail = w.querySelector(".rail"), head = w.querySelector(".row-head");
+    const nav = document.createElement("div"); nav.className = "rail-nav";
+    nav.innerHTML = `<button type="button" aria-label="Scroll left">‹</button><button type="button" aria-label="Scroll right">›</button>`;
+    const [l, r] = nav.querySelectorAll("button");
+    l.onclick = () => rail.scrollBy({ left: -rail.clientWidth * 0.8, behavior: "smooth" });
+    r.onclick = () => rail.scrollBy({ left: rail.clientWidth * 0.8, behavior: "smooth" });
+    head.appendChild(nav);
+  });
 
   // Grid + search
   const grid = document.getElementById("grid");
-  const search = document.getElementById("search");
   function render() {
-    const q = search.value.trim().toLowerCase();
-    const list = GAMES.filter((g) =>
-      (current === "All" || g.category === current) && g.title.toLowerCase().includes(q))
-      .sort((a, b) => (!!b.url - !!a.url) || (!!b.image - !!a.image)); // playable games first, then ones with covers
-    grid.replaceChildren(...list.map(card));
+    const q = search.value.trim();
+    const browsing = !q && current === "All";
+    document.getElementById("spotlight").hidden = !!q;
+    document.getElementById("rows").hidden = !browsing;
+    const list = GAMES.filter((g) => (current === "All" || g.category === current) && matches(g, q))
+      .sort((a, b) => (!!b.url - !!a.url) || (!!b.image - !!a.image)); // playable games first
+    grid.classList.toggle("mosaic", browsing);
+    grid.replaceChildren(...list.map((g) => card(g, { big: browsing && g.hot && g.url })));
     document.getElementById("empty").hidden = list.length > 0;
+    document.getElementById("emptyRequest").href = `request.html${q ? "?game=" + encodeURIComponent(q) : ""}`;
     document.getElementById("gridTitle").textContent =
-      q ? `Results for “${search.value.trim()}”` : current === "All" ? "All games" : `${current} games`;
+      q ? `Results for “${q}”` : current === "All" ? "All games" : `${CAT_ICONS[current] || ""} ${current} games`;
+    document.getElementById("gridCount").textContent = list.length ? `${list.length} game${list.length === 1 ? "" : "s"}` : "";
   }
   const q0 = new URLSearchParams(location.search).get("q");
   if (q0) search.value = q0.slice(0, 60);
@@ -282,7 +358,16 @@ function initHome() {
     if (search.value.trim().toLowerCase() === "ss") { location.href = "gamble.html"; return; }
     render();
   });
+  search.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") { search.value = ""; render(); search.blur(); }
+    if (e.key === "Enter") { const first = grid.querySelector(".card"); if (first && search.value.trim()) location.href = first.href; }
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "/" && document.activeElement !== search && !e.metaKey && !e.ctrlKey) { e.preventDefault(); search.focus(); }
+  });
+  document.getElementById("randomBtn").onclick = () => { const g = randomGame(); if (g) location.href = `play.html?game=${g.id}`; };
   document.getElementById("count").textContent = GAMES.length;
+  search.placeholder = `Search ${GAMES.length} games…`;
   render();
 }
 
@@ -415,11 +500,26 @@ function initPlay() {
   if (report && !g.gamble) report.href = `request.html?type=broken&game=${encodeURIComponent(g.title)}`;
   else if (report) report.remove();
 
-  // More games: same category first
-  const more = GAMES.filter((x) => x.id !== g.id)
-    .sort((a, b) => (b.category === g.category) - (a.category === g.category) || Math.random() - 0.5)
-    .slice(0, 12);
-  document.getElementById("more").replaceChildren(...more.map(card));
+  // Info bar under the game
+  const src = GAMES.find((x) => x.id === g.id) || g;
+  document.getElementById("gameName").textContent = g.title;
+  document.getElementById("gameCat").textContent = g.gamble ? "ZZ-Gamble" : `${CAT_ICONS[src.category] || ""} ${src.category || ""}`;
+  document.getElementById("gameArt").setAttribute("style", src.image || src.title ? coverStyle(src) : "");
+  const share = document.getElementById("share");
+  if (g.gamble) share.remove();
+  else share.onclick = () => {
+    const url = location.href.split("&version")[0];
+    const done = () => { share.textContent = "✓ Copied"; setTimeout(() => (share.textContent = "🔗 Copy link"), 1600); };
+    (navigator.clipboard ? navigator.clipboard.writeText(url) : Promise.reject()).then(done, () => { prompt("Copy this link:", url); });
+  };
+  document.getElementById("nextRandom").onclick = () => { const r = randomGame(g.id); if (r) location.href = `play.html?game=${r.id}`; };
+
+  // More games: same category first, hot games get a nudge
+  const more = GAMES.filter((x) => x.id !== g.id && x.url)
+    .map((x) => ({ x, s: (x.category === src.category ? 2 : 0) + (x.hot ? 1 : 0) + Math.random() * 1.5 }))
+    .sort((a, b) => b.s - a.s).map((o) => o.x)
+    .slice(0, 16);
+  document.getElementById("more").replaceChildren(...more.map((x) => card(x)));
 }
 
 buildSettings();
