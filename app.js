@@ -51,7 +51,6 @@ function favButton(g, big) {
   return b;
 }
 
-const CAT_ICONS = { All: "🎮", Racing: "🏎️", Sports: "🏀", Arcade: "🕹️", Action: "⚔️", Puzzle: "🧩", Retro: "👾", Other: "✨" };
 const badgeFor = (g) => g.new ? `<span class="badge new">NEW</span>` : g.hot ? `<span class="badge hot">HOT</span>` : "";
 
 function card(g, opts = {}) {
@@ -118,10 +117,10 @@ function applySettings() {
 
 function buildSettings() {
   const btn = document.createElement("button");
-  btn.className = "btn ghost icon-btn";
+  btn.className = "icon-btn";
   btn.title = "Settings";
   btn.setAttribute("aria-label", "Settings");
-  btn.textContent = "⚙";
+  btn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>`;
   document.querySelector(".topbar").appendChild(btn);
 
   const panel = document.createElement("div");
@@ -239,9 +238,10 @@ function initHome() {
   const search = document.getElementById("search");
 
   // Spotlight: rotating featured games + "top picks" beside it
-  const feat = GAMES.filter((g) => g.featured && g.url);
-  if (!feat.length) feat.push(GAMES.find((g) => g.url) || GAMES[0]);
-  const picks = GAMES.filter((g) => g.hot && g.url && !g.featured).slice(0, 3);
+  const feat = [{ brand: true, title: SITE.name }, ...GAMES.filter((g) => g.featured && g.url)];
+  let picks = GAMES.filter((g) => g.pick && g.url);
+  if (!picks.length) picks = GAMES.filter((g) => g.hot && g.url && !g.featured);
+  picks = picks.slice(0, 3);
   const spot = document.getElementById("spotlight");
   spot.innerHTML = `
     <div class="spot-main">
@@ -251,6 +251,18 @@ function initHome() {
     <div class="spot-side"><div class="spot-side-title">Top picks</div></div>`;
   const slides = spot.querySelector(".spot-slides"), dots = spot.querySelector(".spot-dots");
   feat.forEach((g, i) => {
+    if (g.brand) {
+      const s = document.createElement("div");
+      s.className = "slide brand-slide" + (i === 0 ? " on" : "");
+      s.innerHTML = `<img class="brand" src="images/logo.png" alt="${SITE.name}"><p class="brand-sub">Free browser games. No downloads.</p>`;
+      slides.appendChild(s);
+      const d = document.createElement("button");
+      d.type = "button"; d.setAttribute("aria-label", "Show " + SITE.name);
+      if (i === 0) d.classList.add("on");
+      d.onclick = () => { show(i); restart(); };
+      dots.appendChild(d);
+      return;
+    }
     const s = document.createElement("a");
     s.className = "slide" + (i === 0 ? " on" : "");
     s.href = `play.html?game=${g.id}`;
@@ -300,7 +312,7 @@ function initHome() {
     const b = document.createElement("button");
     b.type = "button";
     const n = c === "All" ? GAMES.length : GAMES.filter((g) => g.category === c).length;
-    b.innerHTML = `<span class="ci">${CAT_ICONS[c] || "🎮"}</span>${c}`;
+    b.textContent = c;
     if (c === "All") b.classList.add("on");
     b.onclick = () => {
       current = c;
@@ -329,9 +341,9 @@ function initHome() {
     if (list.length < 5) return;
     const sec = document.createElement("section");
     sec.className = "row-wrap";
-    sec.innerHTML = `<div class="row-head"><h2>${CAT_ICONS[c] || ""} ${c}</h2><button type="button" class="see-all">See all</button></div><div class="rail"></div>`;
+    sec.innerHTML = `<div class="row-head"><h2>${c}</h2><button type="button" class="see-all">See all</button></div><div class="rail"></div>`;
     sec.querySelector(".rail").replaceChildren(...list.map((g) => card(g)));
-    sec.querySelector(".see-all").onclick = () => [...catBox.querySelectorAll("button")].find((b) => b.textContent.trim().endsWith(c)).click();
+    sec.querySelector(".see-all").onclick = () => [...catBox.querySelectorAll("button")].find((b) => b.textContent === c).click();
     rows.appendChild(sec);
   });
   // Arrow buttons for rails on desktop
@@ -359,7 +371,7 @@ function initHome() {
     document.getElementById("empty").hidden = list.length > 0;
     document.getElementById("emptyRequest").href = `request.html${q ? "?game=" + encodeURIComponent(q) : ""}`;
     document.getElementById("gridTitle").textContent =
-      q ? `Results for “${q}”` : current === "All" ? "All games" : `${CAT_ICONS[current] || ""} ${current} games`;
+      q ? `Results for “${q}”` : current === "All" ? "All games" : `${current} games`;
     document.getElementById("gridCount").textContent = q && list.length ? `${list.length} found` : "";
   }
   const q0 = new URLSearchParams(location.search).get("q");
@@ -375,7 +387,6 @@ function initHome() {
   document.addEventListener("keydown", (e) => {
     if (e.key === "/" && document.activeElement !== search && !e.metaKey && !e.ctrlKey) { e.preventDefault(); search.focus(); }
   });
-  document.getElementById("randomBtn").onclick = () => { const g = randomGame(); if (g) location.href = `play.html?game=${g.id}`; };
 
   render();
 }
@@ -512,16 +523,15 @@ function initPlay() {
   // Info bar under the game
   const src = GAMES.find((x) => x.id === g.id) || g;
   document.getElementById("gameName").textContent = g.title;
-  document.getElementById("gameCat").textContent = g.gamble ? "ZZ-Gamble" : `${CAT_ICONS[src.category] || ""} ${src.category || ""}`;
+  document.getElementById("gameCat").textContent = g.gamble ? "ZZ-Gamble" : src.category || "";
   document.getElementById("gameArt").setAttribute("style", src.image || src.title ? coverStyle(src) : "");
   const share = document.getElementById("share");
   if (g.gamble) share.remove();
   else share.onclick = () => {
     const url = location.href.split("&version")[0];
-    const done = () => { share.textContent = "✓ Copied"; setTimeout(() => (share.textContent = "🔗 Copy link"), 1600); };
+    const done = () => { share.textContent = "Copied!"; setTimeout(() => (share.textContent = "Copy link"), 1600); };
     (navigator.clipboard ? navigator.clipboard.writeText(url) : Promise.reject()).then(done, () => { prompt("Copy this link:", url); });
   };
-  document.getElementById("nextRandom").onclick = () => { const r = randomGame(g.id); if (r) location.href = `play.html?game=${r.id}`; };
 
   // More games: same category first, hot games get a nudge
   const more = GAMES.filter((x) => x.id !== g.id && x.url)

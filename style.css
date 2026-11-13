@@ -403,3 +403,32 @@ body.window-full .game-bar, body.window-full .more-col { display: none; }
   .card .meta { padding: 6px 8px 8px; }
   .rail { grid-auto-columns: 112px; gap: 8px; }
 }
+
+/* ZZ GAMES logo slide (first in the spotlight rotation) */
+.brand-slide {
+  flex-direction: column; justify-content: center; text-align: center; gap: 10px;
+  background: radial-gradient(ellipse 70% 80% at 50% 45%, #00105c88 0%, #01031fcc 75%), url("images/hero-bg.jpg") center / cover;
+}
+.brand-slide::after { display: none; }
+.brand-slide .brand { width: min(460px, 78%); height: auto; filter: drop-shadow(0 0 22px #1f6bffaa); }
+.brand-slide.on .brand { animation: artIn .7s ease both; }
+.brand-sub { margin: 0; color: #b9c6f2; font-size: .95rem; letter-spacing: .3px; }
+
+/* Settings button: borderless icon that matches the top bar */
+.topbar .icon-btn {
+  display: grid; place-items: center; width: 40px; height: 40px; padding: 0; flex-shrink: 0;
+  background: transparent; border: 0; border-radius: 50%; color: var(--muted); cursor: pointer;
+  transition: color .15s, background .15s, transform .3s;
+}
+.topbar .icon-btn:hover { color: var(--text); background: #ffffff10; transform: rotate(45deg); }
+.topbar .icon-btn:focus-visible { outline: 2px solid var(--accent-2); outline-offset: 2px; }
+
+/* Settings panel: same surfaces as the rest of the site */
+.settings { background: var(--panel); border: 1px solid #ffffff14; box-shadow: 0 24px 70px #000c; }
+.settings-backdrop { background: #01031fcc; }
+
+@media (max-width: 640px) {
+  .topbar .icon-btn { margin-left: auto; }
+  .brand-slide { padding-bottom: 34px; }
+  .brand-sub { font-size: .8rem; }
+}

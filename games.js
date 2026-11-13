@@ -12,6 +12,7 @@
 //             (leave "" and the site makes a colorful cover for you)
 //  featured – true puts it in the rotating spotlight at the top (pick a few)
 //  hot      – true gives it a HOT badge, a big tile, and a spot in the Hot row
+//  pick     – true puts it in the "Top picks" box next to the spotlight (pick 3)
 //  new      – true gives it a NEW badge and a spot in the New row
 //  tags     – extra search words, e.g. "gd" for Geometry Dash
 //  versions – optional list of { label, url } to let players pick a version (see Retro Bowl)
@@ -30,10 +31,10 @@ const SITE = {
 };
 
 const GAMES = [
-  { title: "Tung Tung Kart", category: "Racing", user: "ZZ-Interactives", repo: "Tung-Tung-Kart", url: "https://tung-tung-kart.netlify.app/", image: "images/covers/tung-tung-kart.jpg", hot: true, featured: true },
+  { title: "Tung Tung Kart", category: "Racing", user: "ZZ-Interactives", repo: "Tung-Tung-Kart", url: "https://tung-tung-kart.netlify.app/", image: "images/covers/tung-tung-kart.jpg", hot: true },
 
   { title: "Minecraft", category: "Action", repo: "EaglerCraft", url: "games/eaglercraft/?v=20261028", image: "images/covers/minecraft.jpg", featured: true, hot: true, tags: "mc eaglercraft" },
-  { title: "Slope", category: "Arcade", repo: "Slope", url: "games/slope/", image: "images/covers/slope.jpg", hot: true },
+  { title: "Slope", category: "Arcade", repo: "Slope", url: "games/slope/", image: "images/covers/slope.jpg", hot: true, pick: true },
   { title: "Geometry Dash Lite", category: "Arcade", repo: "geometry-dash", url: "", image: "images/covers/geometry-dash-lite.jpg", tags: "gd" },
   { title: "Stickman Hook", category: "Arcade", repo: "Stickman-Hook", url: "games/stickman-hook/", image: "images/covers/stickman-hook.jpg" },
   { title: "Block Blasts", category: "Puzzle", repo: "Block-Blast", url: "games/block-blast/", image: "images/covers/block-blasts.jpg" },
@@ -60,8 +61,8 @@ const GAMES = [
   { title: "Moto Road Rash 3D", category: "Racing", repo: "MotoRoadRash3D", url: "", image: "images/covers/moto-road-rash-3d.jpg" },
   { title: "Survival Race", category: "Racing", repo: "Survival-Race", url: "games/survival-race/", image: "images/covers/survival-race.jpg" },
   { title: "PolyTrack", category: "Racing", repo: "polytrack2", url: "games/polytrack2/", image: "images/covers/polytrack.jpg" },
-  { title: "Drift Boss", category: "Racing", repo: "Drift-Boss", url: "games/drift-boss/", image: "images/covers/drift-boss.jpg", imagePos: "8% center", hot: true },
-  { title: "Subway Surfers", category: "Arcade", repo: "subway-surfers", url: "games/subway-surfers/", image: "images/covers/subway-surfers.jpg", hot: true },
+  { title: "Drift Boss", category: "Racing", repo: "Drift-Boss", url: "games/drift-boss/", image: "images/covers/drift-boss.jpg", imagePos: "8% center", hot: true, pick: true },
+  { title: "Subway Surfers", category: "Arcade", repo: "subway-surfers", url: "games/subway-surfers/", image: "images/covers/subway-surfers.jpg", hot: true, pick: true },
   { title: "Apple Worm", category: "Puzzle", repo: "Apple-Worm", url: "games/apple-worm/", image: "images/covers/apple-worm.jpg" },
   { title: "Escape Road", category: "Racing", repo: "Escape-Road", url: "games/escape-road/", image: "images/covers/escape-road.jpg" },
   { title: "Hole.io", category: "Arcade", repo: "Hole.io", url: "games/hole-io/", image: "images/covers/hole-io.jpg" },
