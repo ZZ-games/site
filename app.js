@@ -254,7 +254,7 @@ function initHome() {
     if (g.brand) {
       const s = document.createElement("div");
       s.className = "slide brand-slide" + (i === 0 ? " on" : "");
-      s.innerHTML = `<img class="brand" src="images/logo.png" alt="${SITE.name}"><p class="brand-sub">Free browser games. No downloads.</p>`;
+      s.innerHTML = `<img class="brand" src="images/logo.png" alt="${SITE.name}">`;
       slides.appendChild(s);
       const d = document.createElement("button");
       d.type = "button"; d.setAttribute("aria-label", "Show " + SITE.name);
@@ -366,8 +366,7 @@ function initHome() {
     document.getElementById("rows").hidden = !browsing;
     const list = GAMES.filter((g) => (current === "All" || g.category === current) && matches(g, q))
       .sort((a, b) => (!!b.url - !!a.url) || (!!b.image - !!a.image)); // playable games first
-    grid.classList.toggle("mosaic", browsing);
-    grid.replaceChildren(...list.map((g) => card(g, { big: browsing && g.hot && g.url })));
+    grid.replaceChildren(...list.map((g) => card(g)));
     document.getElementById("empty").hidden = list.length > 0;
     document.getElementById("emptyRequest").href = `request.html${q ? "?game=" + encodeURIComponent(q) : ""}`;
     document.getElementById("gridTitle").textContent =

@@ -11,7 +11,7 @@
 //  image    – optional cover image, e.g. "images/slope.png"
 //             (leave "" and the site makes a colorful cover for you)
 //  featured – true puts it in the rotating spotlight at the top (pick a few)
-//  hot      – true gives it a HOT badge, a big tile, and a spot in the Hot row
+//  hot      – true gives it a HOT badge and a spot in the Hot row
 //  pick     – true puts it in the "Top picks" box next to the spotlight (pick 3)
 //  new      – true gives it a NEW badge and a spot in the New row
 //  tags     – extra search words, e.g. "gd" for Geometry Dash
