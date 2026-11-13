@@ -304,24 +304,7 @@ function initHome() {
     side.appendChild(a);
   });
 
-  // Categories (with counts)
-  const cats = ["All", ...new Set(GAMES.map((g) => g.category))];
-  const catBox = document.getElementById("cats");
   let current = "All";
-  cats.forEach((c) => {
-    const b = document.createElement("button");
-    b.type = "button";
-    const n = c === "All" ? GAMES.length : GAMES.filter((g) => g.category === c).length;
-    b.textContent = c;
-    if (c === "All") b.classList.add("on");
-    b.onclick = () => {
-      current = c;
-      catBox.querySelectorAll("button").forEach((x) => x.classList.toggle("on", x === b));
-      render();
-      if (c !== "All") document.getElementById("gridTitle").scrollIntoView({ behavior: S.reduceMotion ? "auto" : "smooth", block: "start" });
-    };
-    catBox.appendChild(b);
-  });
 
   // Rows
   const fill = (wrapId, boxId, list) => {
@@ -333,17 +316,6 @@ function initHome() {
   document.addEventListener("zz-favs", renderFavs);
   renderFavs();
   if (S.showRecent) fill("recentWrap", "recent", byIds(getRecent()));
-  const rows = document.getElementById("rows");
-  cats.filter((c) => c !== "All").forEach((c) => {
-    const list = GAMES.filter((g) => g.category === c && g.url);
-    if (list.length < 5) return;
-    const sec = document.createElement("section");
-    sec.className = "row-wrap";
-    sec.innerHTML = `<div class="row-head"><h2>${c}</h2><button type="button" class="see-all">See all</button></div><div class="rail"></div>`;
-    sec.querySelector(".rail").replaceChildren(...list.map((g) => card(g)));
-    sec.querySelector(".see-all").onclick = () => [...catBox.querySelectorAll("button")].find((b) => b.textContent === c).click();
-    rows.appendChild(sec);
-  });
   // Arrow buttons for rails on desktop
   document.querySelectorAll(".row-wrap").forEach((w) => {
     const rail = w.querySelector(".rail"), head = w.querySelector(".row-head");
