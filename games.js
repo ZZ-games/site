@@ -37,6 +37,7 @@ const SITE = {
 const GAMES = [
   { title: "Tung Tung Kart", category: "Racing", user: "ZZ-Interactives", repo: "Tung-Tung-Kart", url: "https://tung-tung-kart.netlify.app/", image: "covers/tung-tung-kart.jpg", hot: true },
 
+  { title: "ZZ Craft", category: "Puzzle", user: "ZZ-games", repo: "ZZ-craft", url: "https://zz-games.github.io/ZZ-craft/", image: "covers/zz-craft.jpg", tags: "infinite craft combine elements" },
   { title: "Minecraft", category: "Action", repo: "EaglerCraft", url: "https://zz-games.github.io/site/games/eaglercraft/?v=20261028", image: "covers/minecraft.jpg", featured: true, hot: true, tags: "mc eaglercraft" },
   { title: "Slope", category: "Arcade", repo: "Slope", url: "https://zz-games.github.io/site/games/slope/", image: "covers/slope.jpg", hot: true, pick: true },
   { title: "Geometry Dash Lite", category: "Arcade", repo: "geometry-dash", url: "https://zz-games.github.io/geometry-dash/", image: "covers/geometry-dash-lite.jpg", tags: "gd" },
