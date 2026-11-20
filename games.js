@@ -37,7 +37,6 @@ const SITE = {
 const GAMES = [
   { title: "Tung Tung Kart", category: "Racing", user: "ZZ-Interactives", repo: "Tung-Tung-Kart", url: "https://tung-tung-kart.netlify.app/", image: "covers/tung-tung-kart.jpg", hot: true },
 
-  { title: "ZZ Craft", category: "Puzzle", user: "ZZ-games", repo: "ZZ-craft", url: "https://zz-games.github.io/ZZ-craft/", image: "covers/zz-craft.jpg", tags: "infinite craft combine elements" },
   { title: "Minecraft", category: "Action", repo: "EaglerCraft", url: "https://zz-games.github.io/site/games/eaglercraft/?v=20261028", image: "covers/minecraft.jpg", featured: true, hot: true, tags: "mc eaglercraft" },
   { title: "Slope", category: "Arcade", repo: "Slope", url: "https://zz-games.github.io/site/games/slope/", image: "covers/slope.jpg", hot: true, pick: true },
   { title: "Geometry Dash Lite", category: "Arcade", repo: "geometry-dash", url: "https://zz-games.github.io/geometry-dash/", image: "covers/geometry-dash-lite.jpg", tags: "gd" },
@@ -56,6 +55,7 @@ const GAMES = [
   { title: "Retro Bowl College", category: "Sports", repo: "Retro-Bowl-College", url: "https://zz-games.github.io/site/games/retro-bowl-college/", image: "covers/retro-bowl-college.jpg" },
   { title: "Slow Roads", category: "Racing", repo: "slow-roads", url: "https://zz-games.github.io/site/games/slow-roads/", image: "covers/slow-roads.jpg" },
   { title: "Surf Rush", category: "Arcade", repo: "Surf-Rush", url: "https://zz-games.github.io/site/games/surf-rush/", image: "covers/surf-rush.jpg", new: true, featured: true, tags: "surf slope ball endless" },
+  { title: "ZZ Craft", category: "Puzzle", user: "ZZ-games", repo: "ZZ-craft", url: "https://zz-games.github.io/ZZ-craft/", image: "covers/zz-craft.jpg", tags: "infinite craft combine elements" },
   { title: "Soccer Random", category: "Sports", repo: "Soccer-Random", url: "https://zz-games.github.io/site/games/soccer-random/", image: "covers/soccer-random-2.jpg" },
   { title: "Volley Random", category: "Sports", repo: "Volley-Random", url: "https://zz-games.github.io/site/games/volley-random/", image: "covers/volley-random-2.jpg" },
   { title: "Boxing Random", category: "Sports", repo: "Boxing-Random", url: "https://zz-games.github.io/site/games/boxing-random/", image: "covers/boxing-random-2.jpg" },
