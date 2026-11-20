@@ -44,18 +44,31 @@
     renderBrowse();
   } else {
     var appendExtra = mediaType === "movie"
-      ? "?append_to_response=credits,recommendations"
-      : "?append_to_response=credits,recommendations";
+      ? "?append_to_response=credits,recommendations,release_dates"
+      : "?append_to_response=credits,recommendations,content_ratings";
 
     tmdbFetch("/" + mediaType + "/" + tmdbId + appendExtra)
       .then(function (data) {
+        var k = mediaType + ":" + tmdbId;
+        var ok = !data.adult && !ZZ_BLOCK[k] && (ZZ_ALLOW[k] || ratingAllows(mediaType, mediaType === "movie" ? data.release_dates : data.content_ratings, (data.genres || []).map(function (g) { return g.id; })));
+        if (!ok) throw new Error("hidden");
         meta = data;
+        return filterWatchable(mediaType, (data.recommendations && data.recommendations.results) || []).then(function (recs) {
+          if (meta.recommendations) meta.recommendations.results = recs;
+        });
+      })
+      .then(function () {
         renderPage();
         loadingEl.hidden = true;
         contentEl.hidden = false;
       })
-      .catch(function () {
+      .catch(function (e) {
         loadingEl.hidden = true;
+        if (e && e.message === "hidden") {
+          errorEl.querySelector("p").textContent = "This title isn't available on ZZ Games.";
+          var back = errorEl.querySelector("a");
+          if (back) { back.href = "watch.html?type=" + mediaType + "&id=popular"; back.textContent = mediaType === "movie" ? "Back to movies" : "Back to TV"; }
+        }
         errorEl.hidden = false;
       });
   }
@@ -135,9 +148,10 @@
       $("browseEmpty").hidden = true;
       $("browseGrid").innerHTML = '<div class="browse-loading"><div class="spinner"></div></div>';
       tmdbFetch("/search/" + mediaType + "?query=" + encodeURIComponent(q) + "&include_adult=false")
-        .then(function (data) {
+        .then(function (data) { return filterWatchable(mediaType, (data.results || []).filter(function (r) { return r.title || r.name; })); })
+        .then(function (list) {
           if (tok !== searchTok) return;
-          paint((data.results || []).filter(function (r) { return r.title || r.name; }), q);
+          paint(list, q);
         })
         .catch(function () {
           if (tok !== searchTok) return;
@@ -155,7 +169,9 @@
         .then(function (pages) {
           var items = [];
           pages.forEach(function (pg) { items = items.concat(pg.results || []); });
-          items = items.filter(function (r) { return r.poster_path && (r.title || r.name); });
+          return filterWatchable(mediaType, items.filter(function (r) { return r.poster_path && (r.title || r.name); }));
+        })
+        .then(function (items) {
           popularItems = items;
           paint(items, "");
           loadingEl.hidden = true;

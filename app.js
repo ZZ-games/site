@@ -448,9 +448,10 @@ function initFind(input) {
     timer = setTimeout(() => {
       if (typeof tmdbFetch === "function") {
         tmdbFetch("/search/multi?query=" + encodeURIComponent(q) + "&include_adult=false")
-          .then((d) => {
+          .then((d) => filterWatchable(null, (d.results || []).filter((r) => (r.media_type === "movie" || r.media_type === "tv") && r.poster_path).slice(0, 10)))
+          .then((all) => {
             if (my !== tok) return;
-            const list = (d.results || []).filter((r) => (r.media_type === "movie" || r.media_type === "tv") && r.poster_path).slice(0, 6);
+            const list = all.slice(0, 6);
             fillSec("watch", list.length ? `<div class="fr-grid">${list.map((r) => row({
               title: r.title || r.name, kind: r.media_type === "tv" ? "Show" : "Movie",
               sub: ((r.release_date || r.first_air_date || "").slice(0, 4)) || "", art: tmdbPoster(r.poster_path, "w185"),
