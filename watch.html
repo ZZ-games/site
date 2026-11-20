@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Watch · ZZ Games</title>
+  <script>document.title = "ZZ Classroom";</script>
+  <script type="speculationrules">{"prefetch":[{"where":{"selector_matches":".zz-links a, .m-links a, .zz-panel, .topbar .logo, .m-logo"},"eagerness":"moderate"}]}</script>
+  <script src="zz-guard.js?v=202611200"></script>
+  <link rel="icon" type="image/svg+xml" href="tab/classroom.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="tab/classroom-32.png">
+  <link rel="icon" type="image/png" sizes="48x48" href="tab/classroom-48.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="tab/classroom-192.png">
+  <meta name="description" content="Watch on ZZ Games.">
+  <link rel="stylesheet" href="fonts/fonts.css">
+  <link rel="stylesheet" href="style.css?v=202611200">
+  <link rel="stylesheet" href="watch.css?v=202611215">
+  <link rel="stylesheet" href="zz-fx.css?v=202611197">
+  <link rel="expect" href="#fxReady" blocking="render">
+</head>
+<body class="watch-page">
+  <header class="topbar">
+    <a href="index.html" class="logo"><img src="logo-flat.png?v=2" alt="ZZ Games"></a>
+    <span class="fx-pill" aria-hidden="true"></span>
+    <nav class="zz-links" aria-label="Main">
+      <a href="games.html">Games</a>
+      <a href="music.html">Music</a>
+      <a href="watch.html?type=movie&id=popular" data-ch="movies">Movies</a>
+      <a href="watch.html?type=tv&id=popular" data-ch="tv">TV</a>
+    </nav>
+    <script>(function(){var k=new URLSearchParams(location.search).get("type")==="tv"?"tv":"movies";var a=document.querySelector('.zz-links a[data-ch="'+k+'"]');if(a){a.classList.add("on");a.setAttribute("aria-current","page");}})();</script>
+    <i id="fxReady" hidden></i>
+  </header>
+
+  <main class="watch-main">
+    <!-- Loading state -->
+    <div id="watchLoading" class="watch-loading">
+      <div class="spinner"></div>
+      <p>Loading…</p>
+    </div>
+
+    <!-- Error state -->
+    <div id="watchError" class="watch-error" hidden>
+      <p>Couldn't load this title.</p>
+      <a href="games.html" class="btn">Back to games</a>
+    </div>
+
+    <!-- Content (hidden until loaded) -->
+    <div id="watchContent" class="watch-content" hidden>
+      <section id="watchHero" class="watch-hero">
+        <div class="watch-poster-wrap">
+          <img id="watchPoster" class="watch-poster" src="" alt="">
+        </div>
+        <div class="watch-info">
+          <h1 id="watchTitle" class="watch-title"></h1>
+          <div id="watchMeta" class="watch-meta-line"></div>
+          <div id="watchGenres" class="watch-genres"></div>
+          <p id="watchOverview" class="watch-overview"></p>
+          <div class="watch-actions">
+            <button id="watchPlay" class="btn big-btn watch-play-btn" type="button">▶ Play</button>
+          </div>
+          <!-- TV pickers -->
+          <div id="tvPickers" class="tv-pickers" hidden>
+            <label class="tv-pick">
+              <span>Season</span>
+              <select id="seasonPick"></select>
+            </label>
+            <label class="tv-pick">
+              <span>Episode</span>
+              <select id="episodePick"></select>
+            </label>
+          </div>
+        </div>
+      </section>
+
+      <!-- Cast -->
+      <section id="castWrap" class="watch-section" hidden>
+        <h2>Cast</h2>
+        <div id="castGrid" class="cast-grid"></div>
+      </section>
+
+      <!-- Related -->
+      <section id="relatedWrap" class="watch-section" hidden>
+        <h2>You might also like</h2>
+        <div id="relatedGrid" class="related-grid"></div>
+      </section>
+
+      <!-- Popular browse (shown when id=popular) -->
+      <section id="browseWrap" class="watch-section" hidden>
+        <div class="channel-head">
+          <img id="channelBanner" class="channel-banner" src="" alt="" hidden>
+          <form id="browseSearch" class="channel-search" role="search">
+            <svg class="channel-search-ico" aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+            <input id="browseQ" type="search" placeholder="Search" autocomplete="off" aria-label="Search movies and TV">
+            <kbd aria-hidden="true">/</kbd>
+          </form>
+          <h2 id="browseTitle" class="channel-sub"></h2>
+        </div>
+        <div id="browseGrid" class="related-grid"></div>
+        <div id="browseEmpty" class="browse-empty" hidden></div>
+      </section>
+    </div>
+  </main>
+
+  <!-- Watch overlay (full-screen player) -->
+  <div id="watchOverlay" class="watch-overlay" role="dialog" aria-modal="true" aria-label="Video player" hidden>
+    <div class="overlay-backdrop"></div>
+    <div class="overlay-stage">
+      <div class="overlay-loading"><div class="spinner"></div></div>
+      <div id="overlayError" class="overlay-error" hidden>
+        <p>Playback failed.</p>
+        <button id="overlayRetry" class="btn" type="button">Retry</button>
+      </div>
+      <iframe id="watchFrame"
+        sandbox="allow-scripts allow-same-origin allow-forms allow-presentation"
+        allow="autoplay; fullscreen; picture-in-picture"
+        playsinline
+        referrerpolicy="origin"></iframe>
+      <button id="overlayServer" class="overlay-server" type="button" aria-label="Switch server">Server: <b id="overlayServerName"></b><span class="srv-hint"> · not loading? tap to switch</span></button>
+      <button id="overlayClose" class="overlay-close" type="button" aria-label="Close player">✕</button>
+    </div>
+  </div>
+
+  <footer class="foot">ZZ Games · new games added all the time · <a href="request.html">request one</a></footer>
+
+  <script src="games.js?v=202611200"></script>
+  <script src="sources.js?v=202611191"></script>
+  <script src="watch.js?v=202611216"></script>
+  <script src="zz-fx.js?v=202611198"></script>
+</body>
+</html>

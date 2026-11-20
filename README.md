@@ -1,29 +1,29 @@
 # ZZ Games
 
+Live at https://zz-games.github.io/site/ (GitHub Pages, `main` branch, root folder).
+
+## Pages
+- `index.html`: home (Games, Music, Movies, TV)
+- `games.html`: the full game list
+- `play.html`: the game player
+- `music.html`: music player (keeps playing across the site, pauses while a movie or show plays)
+- `watch.html`: movies and TV (TMDB info, video servers in `sources.js`)
+- `request.html`: request a game
+- `gamble.html`: hidden ZZ-Gamble page, opened by typing **SS** in the search box
+
 ## Add or edit a game
 Open `games.js`. Each game is one line:
 
 ```js
-{ title: "Slope", category: "Arcade", repo: "Slope", url: "", image: "" },
+{ title: "Slope", category: "Arcade", repo: "Slope", url: "https://zz-games.github.io/site/games/slope/", image: "covers/slope.jpg" },
 ```
 
-- **repo** – the repo's name on github.com/ZZ-games. The site turns it into `https://zz-games.github.io/Slope/` (capital letters matter, so copy the name exactly).
-- **url** – or paste any full link instead (use this for games hosted somewhere else).
-- **image** – optional. Put a picture in the `images` folder and write `"images/slope.png"`. If you leave it blank, the site makes a colorful cover.
-- **featured: true** – shows that game in the big banner at the top.
+- **url**: where the game loads from. Most games are copied into this repo's `games/` folder, so the link is `https://zz-games.github.io/site/games/NAME/`.
+- **repo**: the game's repo on github.com/ZZ-games. If there's no url, the site loads `https://zz-games.github.io/REPO/` (GitHub Pages must be on in that repo).
+- **image**: cover picture in the `covers/` folder.
+- **featured / hot / new / pick**: put the game in the spotlight, Hot row, New row or Top picks.
 
-## Put it online (free)
-**Option A – GitHub Pages (easiest):** In this repo go to **Settings → Pages**, set Source to "Deploy from a branch", pick `main` and `/ (root)`, and save. In a minute the site is live at https://zz-games.github.io/site/
-
-**Option B – Cloudflare Pages or Netlify (nicer URL, custom domain):** Sign in at pages.cloudflare.com or netlify.com with GitHub, pick the `site` repo, leave the build settings empty, and deploy.
-
-Either way, every change pushed to this repo updates the live site by itself.
-
-## Saves
-Games save their progress in the player's browser. The site also remembers recently played games and shows them under "Continue playing".
+New games go at the end of the list.
 
 ## Where the games live
-Most games are copied into the `games/` folder of this repo, so they load from the site itself and don't depend on GitHub Pages being turned on in each game's own repo. Geometry Dash Lite, Subway Surfers and Moto Road Rash 3D are too big to copy, so they still load from their own repos on the ZZ-games account (GitHub Pages must be on for those).
-
-## ZZ-Gamble (hidden)
-Typing **SS** in the search box opens `gamble.html`, a hidden page with play-money casino games (Phantom Casino, Z-Bet, ZZ Casino). They live in the `gamble/` folder and are not listed on the main page.
+Most games are in the `games/` folder. Geometry Dash Lite, Moto Road Rash 3D and the newer .io/sports games (Basket Champs, Axis Football League, Ping Pong Go!, Bloons TD 4, Gun Mayhem, Nitro Knights.io, Trains.io, WormEat.io, GoTet.io, Dots.io) load from their own repos on the ZZ-games account.

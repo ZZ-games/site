@@ -5,44 +5,29 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>ZZ-Gamble</title>
   <script>document.title = "ZZ Classroom";</script>
-  <link rel="icon" type="image/svg+xml" href="images/tab/classroom.svg">
-  <link rel="icon" type="image/png" sizes="32x32" href="images/tab/classroom-32.png">
-  <link rel="icon" type="image/png" sizes="48x48" href="images/tab/classroom-48.png">
-  <link rel="icon" type="image/png" sizes="192x192" href="images/tab/classroom-192.png">
+  <script type="speculationrules">{"prefetch":[{"where":{"selector_matches":".zz-links a, .m-links a, .zz-panel, .topbar .logo, .m-logo"},"eagerness":"moderate"}]}</script>
+<script src="zz-guard.js?v=202611200"></script>
+  <link rel="icon" type="image/svg+xml" href="tab/classroom.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="tab/classroom-32.png">
+  <link rel="icon" type="image/png" sizes="48x48" href="tab/classroom-48.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="tab/classroom-192.png">
   <meta name="robots" content="noindex, nofollow">
   <link rel="stylesheet" href="fonts/fonts.css">
-  <link rel="stylesheet" href="style.css?v=202611111725">
-  <style>
-    .gamble-hero {
-      margin-top: 24px; border-radius: 22px; padding: clamp(28px, 5vw, 56px) 20px; text-align: center;
-      background:
-        radial-gradient(ellipse 60% 80% at 50% 30%, #3b2a00aa 0%, #01031fdd 70%),
-        url("images/hero-bg.jpg") center / cover;
-      border: 1px solid #f5c24255; box-shadow: inset 0 0 80px #f5c24222, 0 20px 60px #0007;
-    }
-    .gamble-hero h1 {
-      font-family: "Russo One", sans-serif; font-weight: 400; margin: 0;
-      font-size: clamp(2.4rem, 8vw, 4.6rem); letter-spacing: 1px;
-      background: linear-gradient(180deg, #ffe08a, #f5a623 60%, #b86b00);
-      -webkit-background-clip: text; background-clip: text; color: transparent;
-      filter: drop-shadow(0 0 22px #f5c24266);
-    }
-    .gamble-hero .zz { background: linear-gradient(180deg, #7fb2ff, #1f6bff); -webkit-background-clip: text; background-clip: text; }
-        .gamble-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: clamp(16px, 3vw, 32px); margin-top: 32px; }
-    .gamble-grid .card { width: clamp(150px, 28vw, 300px); }
-    .gamble-grid .name { font-size: 1.05rem; }
-    @media (max-width: 640px) {
-      .gamble-grid { gap: 12px; }
-      .gamble-grid .card { width: calc(50% - 6px); }
-      .gamble-grid .name { font-size: .92rem; white-space: normal; }
-    }
-    .gamble-grid .card:hover { border-color: #f5c242; box-shadow: 0 10px 30px #f5c24233; }
-  </style>
+  <link rel="stylesheet" href="style.css?v=202611200">
+  <link rel="stylesheet" href="zz-fx.css?v=202611197">
+  <link rel="expect" href="#fxReady" blocking="render">
 </head>
 <body>
   <header class="topbar">
-    <a href="index.html" class="logo"><img src="images/logo-flat.png" alt="ZZ Games"></a>
-    <a href="index.html" class="btn ghost" style="margin-left:auto">← Back to games</a>
+    <a href="index.html" class="logo"><img src="logo-flat.png?v=2" alt="ZZ Games"></a>
+    <span class="fx-pill" aria-hidden="true"></span>
+    <nav class="zz-links" aria-label="Main">
+      <a href="games.html">Games</a>
+      <a href="music.html">Music</a>
+      <a href="watch.html?type=movie&id=popular" data-ch="movies">Movies</a>
+      <a href="watch.html?type=tv&id=popular" data-ch="tv">TV</a>
+    </nav>
+    <i id="fxReady" hidden></i>
   </header>
 
   <main>
@@ -54,10 +39,10 @@
 
   <script>
     const CASINOS = [
-      { title: "Phantom Casino", url: "gamble/phantom-casino/", image: "images/gamble/phantom-casino.jpg" },
-      { title: "Z-Bet",          url: "gamble/z-bet/",          image: "images/gamble/z-bet.jpg" },
-      { title: "ZZ Casino",      url: "gamble/zz-casino/",      image: "images/gamble/zz-casino.jpg" },
-      { title: "Avia Masters",   url: "gamble/avia-masters/",   image: "images/gamble/avia-masters.jpg" },
+      { title: "Phantom Casino", url: "gamble/phantom-casino/", image: "gamble/phantom-casino.jpg" },
+      { title: "Z-Bet",          url: "gamble/z-bet/",          image: "gamble/z-bet.jpg" },
+      { title: "ZZ Casino",      url: "gamble/zz-casino/",      image: "gamble/zz-casino.jpg" },
+      { title: "Avia Masters",   url: "gamble/avia-masters/",   image: "gamble/avia-masters.jpg" },
     ];
     const grid = document.getElementById("grid");
     for (const c of CASINOS) {
@@ -70,5 +55,6 @@
       grid.appendChild(a);
     }
   </script>
+  <script src="zz-fx.js?v=202611198"></script>
 </body>
 </html>

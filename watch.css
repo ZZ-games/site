@@ -1,0 +1,123 @@
+/* ZZ Games — Movies & TV page (watch.html). Uses the tokens in zz-fx.css. */
+
+.watch-main { max-width: 1160px; }
+
+/* loading / error */
+.watch-loading, .watch-error { display: grid; place-content: center; justify-items: center; gap: 14px; min-height: 50vh; color: var(--muted); text-align: center; }
+.watch-loading p { margin: 0; animation: fx-breathe 1.6s ease-in-out infinite; }
+.watch-error .btn { margin-top: 4px; }
+
+/* title hero: poster + info */
+.watch-hero {
+  position: relative; overflow: hidden; display: flex; gap: clamp(20px, 4vw, 40px); align-items: flex-start;
+  margin-top: 24px; padding: clamp(20px, 3vw, 36px); border-radius: var(--r-lg);
+  background: linear-gradient(150deg, var(--s2), var(--s1) 55%); border: 1px solid var(--edge); box-shadow: var(--drop), var(--lit);
+  animation: fx-pop .65s var(--ease-out) backwards;
+}
+.watch-hero::before {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(520px circle at var(--mx, 20%) var(--my, 0%), #5aa8ff1f, transparent 65%);
+}
+.watch-hero > * { position: relative; }
+.watch-poster-wrap { flex-shrink: 0; width: clamp(140px, 22vw, 260px); }
+.watch-poster {
+  width: 100%; aspect-ratio: 2 / 3; object-fit: cover; border-radius: 16px; background: var(--s2); box-shadow: 0 12px 36px #000a;
+  transition: transform .7s var(--ease-out), box-shadow .4s; animation: fx-pop .8s var(--ease-out) .1s backwards;
+}
+.watch-poster-wrap:hover .watch-poster { transform: scale(1.03) rotate(-1.2deg); box-shadow: 0 24px 54px #000d; }
+.watch-info { flex: 1; min-width: 0; }
+.watch-title { font-size: clamp(1.4rem, 3.5vw, 2.2rem); margin: 0 0 10px; line-height: 1.15; animation: fx-rise .6s var(--ease-out) .15s backwards; }
+.watch-meta-line { color: var(--muted); font-size: .9rem; display: flex; flex-wrap: wrap; gap: 6px 16px; margin-bottom: 10px; animation: fx-rise .6s var(--ease-out) .2s backwards; }
+.watch-meta-line span { white-space: nowrap; }
+.watch-meta-line .rating { color: var(--cyan); font-weight: 700; }
+.watch-genres { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; animation: fx-rise .6s var(--ease-out) .25s backwards; }
+.watch-genres span {
+  font-size: .78rem; font-weight: 600; padding: 4px 12px; border-radius: 999px; color: var(--sky);
+  background: #2466ff14; border: 1px solid var(--edge); transition: background .2s, border-color .2s, transform .25s var(--spring);
+}
+.watch-genres span:hover { background: #2466ff2e; border-color: #5aa8ff66; transform: translateY(-2px); }
+.watch-overview { color: var(--soft); font-size: .95rem; line-height: 1.6; margin: 0 0 18px; animation: fx-rise .6s var(--ease-out) .3s backwards; }
+.watch-actions { display: flex; gap: 10px; flex-wrap: wrap; animation: fx-rise .6s var(--ease-out) .35s backwards; }
+.watch-play-btn { font-size: 1.05rem; padding: 14px 30px; }
+
+/* TV season / episode pickers */
+.tv-pickers { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 16px; animation: fx-rise .5s var(--ease-out) backwards; }
+.tv-pick { display: flex; flex-direction: column; gap: 4px; }
+.tv-pick span { font-size: .78rem; font-weight: 600; color: var(--muted); }
+.tv-pick select {
+  appearance: none; -webkit-appearance: none; cursor: pointer; outline: none;
+  background-color: var(--s2); color: var(--text); border: 1px solid var(--edge); border-radius: 12px;
+  padding: 10px 36px 10px 14px; font: inherit; font-size: .9rem;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='7'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%238796cc' stroke-width='1.5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 12px center; transition: border-color .2s, box-shadow .2s;
+}
+.tv-pick select:hover, .tv-pick select:focus { border-color: var(--sky); box-shadow: 0 0 0 3px #2f7bff33; }
+
+/* sections */
+.watch-section { margin-top: 34px; }
+.watch-section > h2 { margin-bottom: 14px; }
+.cast-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 14px; }
+.cast-card { text-align: center; }
+.cast-photo {
+  width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 8px; background: var(--s2) center top / cover;
+  border: 2px solid var(--edge); transition: transform .4s var(--spring), border-color .3s, box-shadow .3s;
+}
+.cast-card:hover .cast-photo { transform: scale(1.1); border-color: var(--sky); box-shadow: 0 0 0 4px #2f7bff33, 0 10px 24px #000a; }
+.cast-name { font-size: .82rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cast-role { font-size: .72rem; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.related-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 14px; }
+
+/* channel header (Movies / TV browse) */
+#browseWrap { margin-top: 0; }
+.channel-head { display: flex; flex-direction: column; align-items: center; gap: 18px; text-align: center; margin: 0 auto 14px; padding-top: clamp(18px, 3.5vw, 44px); }
+.channel-banner { display: block; width: min(460px, 84vw); height: auto; aspect-ratio: 2180 / 720; filter: drop-shadow(0 14px 30px #000b); animation: fx-wipe .9s cubic-bezier(.65, 0, .2, 1) backwards; }
+.channel-tag { margin: 0; max-width: 520px; color: var(--soft); font-size: 1.05rem; line-height: 1.5; animation: fx-rise .6s var(--ease-out) .4s backwards; }
+.channel-tag:empty { display: none; }
+.channel-search { margin-top: 4px; animation: fx-rise .6s var(--ease-out) .5s backwards; }
+.channel-search input { padding-left: 56px; }
+.channel-search-ico { left: 22px; width: 20px; height: 20px; }
+.channel-head .channel-sub { align-self: stretch; display: flex; align-items: center; gap: 10px; text-align: left; margin: 26px 0 0; font-size: 1.35rem; line-height: 1.1; }
+.channel-head .channel-sub::before { content: ""; width: 4px; height: 1.05em; border-radius: 2px; flex: none; background: var(--blue); }
+.channel-head .channel-sub:empty { display: none; }
+.browse-empty { color: var(--muted); text-align: center; padding: 40px 0 10px; }
+.browse-loading { display: grid; place-items: center; min-height: 220px; color: var(--muted); }
+
+/* full-screen player */
+.watch-overlay { position: fixed; inset: 0; z-index: 200; display: flex; align-items: center; justify-content: center; }
+.overlay-backdrop { position: absolute; inset: 0; background: #010314e6; -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); animation: fx-fade .3s ease backwards; }
+.overlay-stage {
+  position: relative; width: 100%; max-width: 1400px; aspect-ratio: 16 / 9; margin: 0 auto; border-radius: 12px; overflow: hidden;
+  background: #000; box-shadow: 0 30px 90px #000, 0 0 0 1px var(--edge); animation: fx-pop .5s var(--ease-out) backwards;
+}
+.overlay-stage iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; z-index: 1; }
+.overlay-loading { position: absolute; inset: 0; z-index: 2; display: grid; place-items: center; background: #000; transition: opacity .4s, visibility .4s; }
+.overlay-loading.done { opacity: 0; visibility: hidden; pointer-events: none; }
+.overlay-error { position: absolute; inset: 0; z-index: 3; display: grid; place-content: center; justify-items: center; gap: 12px; background: #000; color: var(--muted); }
+.overlay-close {
+  position: absolute; top: 12px; right: 12px; z-index: 4; width: 42px; height: 42px; border-radius: 50%; border: 0; cursor: pointer;
+  background: #000a; color: #fff; font-size: 1.1rem; display: grid; place-items: center; opacity: .6; backdrop-filter: blur(8px);
+  transition: opacity .2s, background .2s, transform .4s var(--spring);
+}
+.overlay-server {
+  position: absolute; top: 12px; left: 50%; translate: -50% 0; z-index: 4; height: 36px; padding: 0 14px; border-radius: 18px; white-space: nowrap; border: 0; cursor: pointer;
+  background: #000a; color: #fff; font: inherit; font-size: .85rem; opacity: .6; backdrop-filter: blur(8px);
+  transition: opacity .35s ease, background .2s, transform .3s var(--spring);
+}
+.overlay-server b { font-weight: 700; }
+.overlay-server .srv-hint { display: none; }
+.overlay-server.nudge { opacity: 1; background: var(--blue); animation: srvNudge 1.6s ease-in-out 2; }
+.overlay-server.nudge .srv-hint { display: inline; }
+.overlay-server.idle { opacity: 0; transition: opacity .8s ease; }
+.overlay-server:hover { opacity: 1; background: var(--blue); transform: scale(1.04); }
+@keyframes srvNudge { 50% { transform: scale(1.06); } }
+.overlay-close:hover { opacity: 1; background: var(--blue); transform: rotate(90deg) scale(1.08); }
+
+@media (max-width: 640px) {
+  .watch-hero { flex-direction: column; align-items: center; text-align: center; padding: 20px 16px; }
+  .watch-poster-wrap { width: 180px; }
+  .watch-info { width: 100%; }
+  .watch-genres, .watch-actions, .tv-pickers { justify-content: center; }
+  .cast-grid { grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 10px; }
+  .related-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .overlay-stage { border-radius: 0; }
+}

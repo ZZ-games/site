@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Music · ZZ Games</title>
+  <script>document.title = "ZZ Classroom";</script>
+  <script id="zzSpec" type="speculationrules">{"prefetch":[{"where":{"selector_matches":".zz-links a, .m-links a, .zz-panel, .topbar .logo, .m-logo"},"eagerness":"moderate"}]}</script>
+  <script src="zz-guard.js?v=202611200"></script>
+  <link rel="icon" type="image/svg+xml" href="tab/classroom.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="tab/classroom-32.png">
+  <link rel="icon" type="image/png" sizes="48x48" href="tab/classroom-48.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="tab/classroom-192.png">
+  <meta name="description" content="Free music on ZZ Games: charts, search, mood mixes and playlists.">
+  <meta name="theme-color" content="#020414">
+  <!-- start connecting to the music servers while the page loads -->
+  <link rel="preconnect" href="https://pipedapi.private.coffee" crossorigin>
+  <link rel="preconnect" href="https://pipedapi.ducks.party" crossorigin>
+  <link rel="preconnect" href="https://pipedapi.kavin.rocks" crossorigin>
+  <link rel="preconnect" href="https://pipedapi.adminforge.de" crossorigin>
+  <link rel="preconnect" href="https://inv.nadeko.net" crossorigin>
+  <link rel="preconnect" href="https://invidious.nerdvpn.de" crossorigin>
+  <link rel="preconnect" href="https://www.youtube.com">
+  <link rel="preconnect" href="https://www.youtube-nocookie.com">
+  <link rel="dns-prefetch" href="https://api.deezer.com">
+  <link rel="stylesheet" href="fonts/fonts.css">
+  <link rel="stylesheet" href="music/music.css?v=202611185">
+  <link rel="stylesheet" href="zz-fx.css?v=202611197">
+  <link rel="expect" href="#fxReady" blocking="render">
+</head>
+<body class="music">
+  <div class="m-top">
+    <div class="m-grid" aria-hidden="true"></div>
+    <header class="m-nav" id="mnav">
+      <a href="index.html" class="m-logo"><img src="logo-flat.png?v=2" alt="ZZ Games"></a>
+      <span class="fx-pill" aria-hidden="true"></span>
+      <nav class="m-links" aria-label="Main">
+        <a href="games.html" id="openGamesView">Games</a>
+        <a href="music.html" class="on">Music</a>
+        <a href="watch.html?type=movie&id=popular">Movies</a>
+        <a href="watch.html?type=tv&id=popular">TV</a>
+      </nav>
+      <i id="fxReady" hidden></i>
+    </header>
+
+    <section class="m-hero" id="mhero">
+      <p class="m-eyebrow" id="mGreet">Music</p>
+      <h1 class="m-title m-banner-title"><img src="banner-music.png?v=202611181" alt="Music"></h1>
+      <form class="m-search" id="mfind" role="search">
+        <label class="sr-only" for="mq">Search music</label>
+        <i data-ic="search"></i>
+        <input id="mq" type="search" placeholder="Search songs, artists and albums" autocomplete="off">
+        <kbd aria-hidden="true">/</kbd>
+      </form>
+      <div class="m-channels" id="mchans" role="group" aria-label="Music sections">
+        <a class="m-panel" href="#/" data-nav="home">
+          <span class="m-panel-top"><i data-ic="compass"></i><span class="m-go"><i data-ic="play"></i></span></span>
+          <span class="m-panel-txt"><b>Discover</b><span>Picks tuned to you, the chart and community playlists.</span></span>
+        </a>
+        <a class="m-panel" href="#/library" data-nav="library">
+          <span class="m-panel-top"><i data-ic="crate"></i><span class="m-go"><i data-ic="play"></i></span></span>
+          <span class="m-panel-txt"><b>Playlists</b><span>Your playlists, liked songs and artists you follow.</span></span>
+        </a>
+      </div>
+    </section>
+  </div>
+
+  <main class="m-main" id="main"><div class="view" id="view"></div></main>
+
+  <div id="gameShell" hidden><iframe id="gameFrame" title="ZZ Games" allow="autoplay; fullscreen; gamepad; clipboard-write" allowfullscreen></iframe></div>
+
+  <aside class="np" id="np" aria-label="Now playing">
+    <div class="np-head"><span class="eyebrow">Now playing</span><button class="ib" id="npClose" aria-label="Close"><i data-ic="close"></i></button></div>
+    <div class="np-vid" id="npVid" hidden></div>
+    <div class="np-art" id="npArtBox"><img id="npArt" alt=""></div>
+    <div class="np-meta"><h2 id="npTitle">Nothing yet</h2><p id="npSub">Pick something to play</p></div>
+    <div class="np-actions">
+      <button class="ib" id="npLike" aria-label="Like"><i data-ic="heart"></i></button>
+      <button class="ib" id="npAdd" aria-label="Add to a playlist"><i data-ic="plus"></i></button>
+      <button class="ib" id="npRadio" aria-label="Start song radio"><i data-ic="wave"></i></button>
+      <button class="pill-btn" id="autoBtn" title="When a queue ends, keep playing similar songs">Autoplay</button>
+    </div>
+    <div class="np-mobile-ctl">
+      <div class="np-seek"><span id="npCur">0:00</span><input type="range" id="npSeek" min="0" max="1000" value="0" aria-label="Seek"><span id="npDur">0:00</span></div>
+      <div class="ctl big">
+        <button class="ib" data-act="shuffle" aria-label="Shuffle"><i data-ic="shuffle"></i></button>
+        <button class="ib" data-act="prev" aria-label="Previous"><i data-ic="prev"></i></button>
+        <button class="playbtn" data-act="toggle" aria-label="Play or pause"><i data-ic="play"></i></button>
+        <button class="ib" data-act="next" aria-label="Next"><i data-ic="next"></i></button>
+        <button class="ib" data-act="repeat" aria-label="Repeat"><i data-ic="repeat"></i></button>
+      </div>
+    </div>
+    <div class="np-qh"><span class="eyebrow" id="qLabel">Up next</span><button class="link" id="qClear">Clear</button></div>
+    <div class="np-q" id="npQueue"></div>
+  </aside>
+  <div class="np-scrim" id="npScrim"></div>
+
+  <div class="bar" id="bar" hidden>
+    <div class="bar-prog"><div class="bar-fill" id="seekFill"></div><input type="range" id="seek" min="0" max="1000" value="0" aria-label="Seek"></div>
+    <button class="bar-now" id="barNow" aria-label="Open now playing">
+      <span class="bar-art"><img id="barArt" alt=""></span>
+      <span class="bar-txt"><b id="barTitle"></b><span id="barSub"></span></span>
+    </button>
+    <button class="ib bar-like" id="barLike" aria-label="Like"><i data-ic="heart"></i></button>
+    <div class="bar-mid">
+      <div class="ctl">
+        <button class="ib" data-act="shuffle" aria-label="Shuffle"><i data-ic="shuffle"></i></button>
+        <button class="ib" data-act="prev" aria-label="Previous"><i data-ic="prev"></i></button>
+        <button class="playbtn" data-act="toggle" aria-label="Play or pause"><i data-ic="play"></i></button>
+        <button class="ib" data-act="next" aria-label="Next"><i data-ic="next"></i></button>
+        <button class="ib" data-act="repeat" aria-label="Repeat"><i data-ic="repeat"></i></button>
+      </div>
+      <div class="bar-time"><span id="tCur">0:00</span><i>/</i><span id="tDur">0:00</span><em id="liveTag" hidden>On air</em></div>
+    </div>
+    <div class="bar-side">
+      <button class="ib" id="sleepBtn" aria-label="Sleep timer"><i data-ic="clock"></i></button>
+      <button class="ib" id="panelBtn" aria-label="Up next"><i data-ic="queue"></i></button>
+      <button class="ib" id="muteBtn" aria-label="Mute"><i data-ic="vol"></i></button>
+      <input type="range" id="vol" min="0" max="100" aria-label="Volume">
+      <button class="ib" id="stopBtn" aria-label="Stop and close"><i data-ic="close"></i></button>
+    </div>
+  </div>
+
+  <div class="menu" id="menu" hidden></div>
+  <div class="toasts" id="toasts" aria-live="polite"></div>
+  <dialog id="dlg"></dialog>
+  <style>
+    /* Site shell: while a song is loaded, other pages open here so the music keeps playing */
+    #gameShell { position: fixed; inset: 0; z-index: 41; background: #00030f; }
+    /* on other pages the player lives in the nav's "now playing" dropdown, so the bottom bar steps aside */
+    body.games-overlay #bar { display: none !important; }
+    #gameFrame { display: block; width: 100%; height: 100%; border: 0; background: #00030f; }
+    body.games-overlay { overflow: hidden; padding-top: 0 !important; }
+    body.games-overlay > .m-top, body.games-overlay > .m-note, body.games-overlay > .m-main, body.games-overlay > .fx-bg { visibility: hidden; pointer-events: none; }
+  </style>
+  <script src="music/music.js?v=202611203"></script>
+  <script>
+    (() => {
+      const shell = document.getElementById('gameShell');
+      const frame = document.getElementById('gameFrame');
+      const PAGES = ['index.html', 'games.html', 'play.html', 'watch.html', 'request.html', 'gamble.html'];
+      const music = () => window.ZZMusic;
+      const fileOf = (u) => u.pathname.split('/').pop() || 'index.html';
+      const sitePage = (href) => {
+        try {
+          const u = new URL(href, location.href);
+          return u.origin === location.origin && PAGES.includes(fileOf(u)) ? u : null;
+        } catch { return null; }
+      };
+      const rel = (u) => fileOf(u) + u.search + u.hash;
+      let active = false;
+
+      // History: opening / closing the shell adds one entry; pages navigating inside it add their
+      // own entries (the browser does that), and the address bar just follows along.
+      const go = (href) => { try { frame.contentWindow.location.replace(href); } catch { frame.src = href; } };
+      // Switching between the Music page and another page cross-fades, like a normal tab switch.
+      // Opening a page waits (briefly) for it to load, so you never see an empty frame.
+      const calm = () => document.documentElement.classList.contains('reduce-motion');
+      const smooth = (fn) => {
+        if (!document.startViewTransition || calm()) { fn(); return null; }
+        const vt = document.startViewTransition(fn);
+        // a crossfade cut short (e.g. leaving the page mid-switch) is fine: don't report it as an error
+        [vt.ready, vt.finished, vt.updateCallbackDone].forEach((p) => p.catch(() => {}));
+        return vt;
+      };
+      const loaded = () => new Promise((res) => {
+        const t = setTimeout(res, 1200);
+        frame.addEventListener('load', () => { clearTimeout(t); setTimeout(res, 60); }, { once: true });
+      });
+      function showView(u, push = true) {
+        const url = 'music.html?view=' + encodeURIComponent(rel(u));
+        if (push) history.pushState({ zzView: rel(u) }, '', url); else history.replaceState({ zzView: rel(u) }, '', url);
+        const change = frame.getAttribute('data-src') !== rel(u);
+        if (change) { frame.setAttribute('data-src', rel(u)); go(u.href); }
+        const reveal = () => { active = true; document.body.classList.add('games-overlay'); shell.hidden = false; };
+        if (active || !change) { reveal(); return; }
+        active = true;
+        smooth(() => loaded().then(reveal));
+      }
+      function closeView(push = true) {
+        if (!active) return;
+        active = false;
+        if (push) history.pushState({}, '', 'music.html' + location.hash); else history.replaceState({}, '', 'music.html' + location.hash);
+        const vt = smooth(() => { document.body.classList.remove('games-overlay'); shell.hidden = true; });
+        const blank = () => { if (active) return; frame.removeAttribute('data-src'); go('about:blank'); };   // unless it was reopened meanwhile
+        if (vt && vt.finished) vt.finished.then(blank, blank); else blank();
+      }
+
+      // Links on the Music page: open site pages in the shell only while music is loaded
+      document.addEventListener('click', (e) => {
+        const a = e.target.closest('a[href]');
+        if (!a || e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || a.target === '_blank') return;
+        const u = sitePage(a.href);
+        if (u && music()?.active()) { e.preventDefault(); showView(u); }
+      }, true);
+
+      // Inside the shell: pages navigate on their own; "Music" brings you back here
+      frame.addEventListener('load', () => {
+        let doc, loc;
+        try { doc = frame.contentDocument; loc = frame.contentWindow.location; } catch { return; }
+        if (!doc || loc.href === 'about:blank') return;
+        const u = new URL(loc.href);
+        if (fileOf(u) === 'music.html') { closeView(); return; }
+        if (active && frame.getAttribute('data-src') !== rel(u)) {
+          frame.setAttribute('data-src', rel(u));
+          history.replaceState({ zzView: rel(u) }, '', 'music.html?view=' + encodeURIComponent(rel(u)));
+        }
+        doc.addEventListener('click', (e) => {
+          const a = e.target.closest('a[href]');
+          if (!a || e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+          let t; try { t = new URL(a.href, loc.href); } catch { return; }
+          if (t.origin === location.origin && fileOf(t) === 'music.html') {
+            e.preventDefault();
+            if (t.hash && t.hash !== location.hash) history.replaceState(history.state, '', location.pathname + location.search + t.hash);
+            closeView();
+            dispatchEvent(new HashChangeEvent('hashchange'));
+          }
+        }, true);
+      });
+
+      // Back / forward
+      addEventListener('popstate', (e) => {
+        const v = e.state && e.state.zzView;
+        const u = v && sitePage(v);
+        if (u) showView(u, false); else closeView(false);
+      });
+
+      // While a song is loaded, tab links open inside this page, so hover-preloading them is wasted work
+      addEventListener('zzmusic:track', () => { const sp = document.getElementById('zzSpec'); if (sp) sp.remove(); });
+
+      // Player closed while a page is open: leave the shell and go to that page for real
+      addEventListener('zzmusic:closed', () => {
+        if (!active) return;
+        let href = frame.src;
+        try { href = frame.contentWindow.location.href; } catch { /* use src */ }
+        location.href = href;
+      });
+
+      // Opened as music.html?view=page (a song was started from another page, or a reload)
+      const v0 = new URLSearchParams(location.search).get('view');
+      const u0 = v0 && sitePage(v0);
+      if (u0) {
+        if (music()?.active()) showView(u0, false);
+        else location.replace(u0.href);   // nothing playing any more (e.g. after a reload): just go to the page
+      }
+    })();
+  </script>
+  <script src="zz-fx.js?v=202611198"></script>
+</body>
+</html>
