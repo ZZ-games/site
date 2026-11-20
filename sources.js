@@ -118,27 +118,30 @@ function tmdbFetch(path) {
   }).then(function (r) { if (!r.ok) throw new Error("TMDB " + r.status); return r.json(); });
 }
 
-// ---- Age filter ----
-// Hidden from the site: NC-17 movies, and TV-MA shows that aren't cartoons (so Rick and Morty stays,
-// Euphoria goes). Each title's US rating is looked up once and remembered on this device.
-var ZZ_BLOCK = { "tv:85552": 1 };     // always hidden (Euphoria), whatever its rating says
-var ZZ_ALLOW = {};                    // always shown, e.g. { "tv:1396": 1 } for Breaking Bad
-var RATE_KEY = "zz-rated-v1", rateMem = null;
+// ---- Content filter ----
+// Hidden from the site: NC-17 movies and anything TMDB tags for nudity or sex scenes (so Euphoria
+// goes, while TV-MA shows like Breaking Bad and cartoons like Rick and Morty stay). Each title is
+// checked once and remembered on this device.
+var ZZ_BLOCK = { "tv:85552": 1 };     // always hidden (Euphoria)
+var ZZ_ALLOW = {};                    // always shown, e.g. { "tv:1399": 1 }
+var NUDE_RE = /nudity|nude|sex scene|explicit sex|softcore|erotic|pornograph|orgy|stripper|strip club|prostitut|sexual content|full frontal/i;
+var RATE_KEY = "zz-rated-v2", rateMem = null;
+try { localStorage.removeItem("zz-rated-v1"); } catch (e) {}
 function rateStore() {
   if (!rateMem) { try { rateMem = JSON.parse(localStorage.getItem(RATE_KEY)) || {}; } catch (e) { rateMem = {}; } }
   return rateMem;
 }
 function rateSave() { try { localStorage.setItem(RATE_KEY, JSON.stringify(rateMem)); } catch (e) {} }
-// data: a /movie/{id}/release_dates or /tv/{id}/content_ratings answer
-function ratingAllows(kind, data, genreIds) {
-  var res = (data && data.results) || [];
-  var us = res.filter(function (r) { return r.iso_3166_1 === "US"; })[0];
+// kw: a /keywords answer; rel: a /movie/{id}/release_dates answer (movies only)
+function contentAllows(kind, kw, rel) {
+  var words = (kw && (kw.keywords || kw.results)) || [];
+  if (words.some(function (w) { return NUDE_RE.test(w.name || ""); })) return false;
   if (kind === "movie") {
+    var us = ((rel && rel.results) || []).filter(function (r) { return r.iso_3166_1 === "US"; })[0];
     var certs = us ? (us.release_dates || []).map(function (d) { return d.certification; }) : [];
-    return certs.indexOf("NC-17") < 0;
+    if (certs.indexOf("NC-17") >= 0) return false;
   }
-  var cartoon = (genreIds || []).indexOf(16) >= 0;
-  return !(us && us.rating === "TV-MA" && !cartoon);
+  return true;
 }
 function isWatchable(kind, id, genreIds, adult) {
   var k = kind + ":" + id;
@@ -146,15 +149,16 @@ function isWatchable(kind, id, genreIds, adult) {
   if (ZZ_ALLOW[k]) return Promise.resolve(true);
   var st = rateStore();
   if (k in st) return Promise.resolve(!!st[k]);
-  return tmdbFetch("/" + kind + "/" + id + (kind === "movie" ? "/release_dates" : "/content_ratings"))
-    .then(function (d) { var ok = ratingAllows(kind, d, genreIds); st[k] = ok ? 1 : 0; rateSave(); return ok; })
+  return Promise.all([
+    tmdbFetch("/" + kind + "/" + id + "/keywords"),
+    kind === "movie" ? tmdbFetch("/movie/" + id + "/release_dates") : Promise.resolve(null),
+  ]).then(function (r) { var ok = contentAllows(kind, r[0], r[1]); st[k] = ok ? 1 : 0; rateSave(); return ok; })
     .catch(function () { return true; });
 }
 // keep only the titles that pass (kind: "movie" / "tv", or each item's own media_type)
 function filterWatchable(kind, items) {
-  return Promise.all(items.map(function (it) {
-    return isWatchable(kind || it.media_type, it.id, it.genre_ids || (it.genres || []).map(function (g) { return g.id; }), it.adult);
-  })).then(function (oks) { return items.filter(function (_, i) { return oks[i]; }); });
+  return Promise.all(items.map(function (it) { return isWatchable(kind || it.media_type, it.id, it.genre_ids, it.adult); }))
+    .then(function (oks) { return items.filter(function (_, i) { return oks[i]; }); });
 }
 
 function tmdbPoster(path, size) {

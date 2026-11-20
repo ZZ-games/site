@@ -44,13 +44,13 @@
     renderBrowse();
   } else {
     var appendExtra = mediaType === "movie"
-      ? "?append_to_response=credits,recommendations,release_dates"
-      : "?append_to_response=credits,recommendations,content_ratings";
+      ? "?append_to_response=credits,recommendations,release_dates,keywords"
+      : "?append_to_response=credits,recommendations,keywords";
 
     tmdbFetch("/" + mediaType + "/" + tmdbId + appendExtra)
       .then(function (data) {
         var k = mediaType + ":" + tmdbId;
-        var ok = !data.adult && !ZZ_BLOCK[k] && (ZZ_ALLOW[k] || ratingAllows(mediaType, mediaType === "movie" ? data.release_dates : data.content_ratings, (data.genres || []).map(function (g) { return g.id; })));
+        var ok = !data.adult && !ZZ_BLOCK[k] && (ZZ_ALLOW[k] || contentAllows(mediaType, data.keywords, data.release_dates));
         if (!ok) throw new Error("hidden");
         meta = data;
         return filterWatchable(mediaType, (data.recommendations && data.recommendations.results) || []).then(function (recs) {
