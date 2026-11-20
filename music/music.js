@@ -401,7 +401,15 @@
   const INVHOSTS = ['https://inv.nadeko.net', 'https://invidious.nerdvpn.de', 'https://invidious.f5.si', 'https://inv.tux.pizza', 'https://invidious.privacyredirect.com'];
   // Optional, most reliable: a free YouTube Data API key (Google Cloud console → YouTube Data API v3 →
   // Create API key, then restrict it to the website zz-games.github.io). Leave empty to skip.
-  const YT_KEY = 'AIzaSyCZ2vIxFir0cgT1RdAMeow60_IsPGfIJX8';
+  // Each key allows about 100 song lookups a day; add more keys to the list for more.
+  const YT_KEYS = ['AIzaSyCZ2vIxFir0cgT1RdAMeow60_IsPGfIJX8'];
+  const YT_KEY = YT_KEYS[0] || '';
+  const keyDay = () => new Date(Date.now() - 8 * 3600e3).toISOString().slice(0, 10);   // quotas reset at midnight Pacific
+  const keyDead = store.get('ytKeyDead', {});
+  const liveKey = () => YT_KEYS.find((k) => keyDead[k] !== keyDay());
+  // videos that refused to play on other sites (or were wrong): never picked again
+  const ytBad = new Set(store.get('ytBad', []));
+  const markBad = (v) => { if (!v) return; ytBad.add(v); store.set('ytBad', [...ytBad].slice(-400)); };
   // v2: older lookups could match the wrong song, so they're dropped
   try { localStorage.removeItem('zzs:ytv'); } catch { /* ignore */ }
   // Ask every lookup server at once and take the first good answer (one slow or dead server
@@ -432,20 +440,25 @@
   const songName = (v) => normAudio(String(v || '')
     .replace(/[([](?:[^)\]]*?)(?:feat|ft\.|with |official|lyric|audio|video|visuali[sz]er|remaster|explicit|clean|hd|4k|mv)[^)\]]*[)\]]/gi, ' ')
     .replace(/\b(?:feat|ft)\.?\s.*$/i, ' ')
+    .replace(/\b(?:\d{4}\s+)?remaster(?:ed)?(?:\s+\d{4})?\b/gi, ' ')
     .replace(/\b(?:official|music video|lyric video|lyrics?|audio|visuali[sz]er|hd|4k)\b/gi, ' '));
   const ALT = /\b(remix|cover|live|sped up|slowed|reverb|nightcore|karaoke|instrumental|8d|acoustic|edit|version|mashup|bass boosted)\b/i;
   function pickVideo(items, t) {
-    const want = songName(t.t), wantA = normAudio(t.a), firstA = normAudio(String(t.a || '').split(/,|&| x | feat/i)[0]);
-    if (!want) return null;
+    const wantA = normAudio(t.a), firstA = normAudio(String(t.a || '').split(/,|&| x | feat/i)[0]);
+    // "Song - Radio Edit" / "Song - From the Movie": the part before " - " counts too
+    const wants = [...new Set([songName(t.t), songName(String(t.t || '').split(/\s[-–]\s/)[0])].filter((w) => w))];
+    if (!wants.length) return null;
     const wd = t.d || 0, altOK = ALT.test(t.t);
     let best = null, bs = -1;
-    for (const x of items.slice(0, 10)) {
+    for (const x of items.slice(0, 12)) {
+      const vid = (String(x.url || '').split('v=')[1] || '').split('&')[0];
+      if (ytBad.has(vid)) continue;
       const raw = x.title || '', who = normAudio((x.uploader || x.uploaderName || '').replace(/\s*-\s*topic$/i, ''));
       if (!altOK && ALT.test(raw)) continue;                         // a remix / cover / live take isn't the song
       let xt = songName(raw);
       for (const a of [wantA, firstA]) if (a) xt = xt.replace(a, ' ').replace(/\s+/g, ' ').trim();   // "Drake - Hotline Bling" → "hotline bling"
-      const exact = xt === want;
-      const close = !exact && want.length >= 4 && (xt.startsWith(want + ' ') || xt.endsWith(' ' + want) || xt.includes(' ' + want + ' '));
+      const exact = wants.includes(xt);
+      const close = !exact && wants.some((want) => want.length >= 4 && (xt.startsWith(want + ' ') || xt.endsWith(' ' + want) || xt.includes(' ' + want + ' ')));
       if (!exact && !close) continue;                                // the title has to be this song
       const artistOK = !!firstA && (who.includes(firstA) || normAudio(raw).includes(firstA));
       const xd = Math.round(x.duration || 0);
@@ -467,44 +480,68 @@
       .finally(() => { clearTimeout(kill); ctl.abort(); });
   }
   const unEntity = (h) => { const d = document.createElement('textarea'); d.innerHTML = h || ''; return d.value; };
+  const isoSec = (d) => { const m = /PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/.exec(d || ''); return m ? (+m[1] || 0) * 3600 + (+m[2] || 0) * 60 + (+m[3] || 0) : 0; };
+  // YouTube's own search (the most reliable). Only videos that can play on other sites are asked for,
+  // and their lengths are checked so a live take or a different song isn't picked.
+  async function keySearch(q) {
+    for (let n = 0; n < YT_KEYS.length; n++) {
+      const k = liveKey();
+      if (!k) break;
+      const r = await fetch('https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&videoEmbeddable=true&maxResults=12&q=' + q + '&key=' + k, { signal: AbortSignal.timeout(8000) });
+      if (r.status === 403 || r.status === 429) {
+        const why = await r.text().catch(() => '');
+        if (/quota|limit/i.test(why)) { keyDead[k] = keyDay(); store.set('ytKeyDead', keyDead); continue; }   // used up for today: next key
+        throw new Error('key refused');
+      }
+      if (!r.ok) throw new Error(r.status);
+      const items = ((await r.json()).items || []).filter((x) => x.id && x.id.videoId);
+      const dur = {};
+      try {
+        const d = await fetch('https://www.googleapis.com/youtube/v3/videos?part=contentDetails&id=' + items.map((x) => x.id.videoId).join(',') + '&key=' + k, { signal: AbortSignal.timeout(5000) }).then((x) => x.json());
+        for (const v of d.items || []) dur[v.id] = isoSec(v.contentDetails && v.contentDetails.duration);
+      } catch { /* lengths are a bonus */ }
+      return items.map((x) => ({ url: '/watch?v=' + x.id.videoId, type: 'stream', title: unEntity(x.snippet.title), uploader: unEntity(x.snippet.channelTitle), duration: dur[x.id.videoId] || 0 }));
+    }
+    throw new Error('no key left today');
+  }
   const ytPending = new Map();   // lookups in progress, shared by "play" and "get ready"
-  function ytResolve(t) {
+  // Find the song's video. Getting ready ahead of time uses only the free servers; playing (useKey)
+  // also asks YouTube's own search straight away, so the full song is found every time.
+  function ytResolve(t, { useKey = false } = {}) {
     const hit = ytc[t.id];
-    if (hit && Date.now() - hit[1] < 30 * 864e5) return Promise.resolve(hit[0]);
-    if (ytcFail[t.id] && Date.now() - ytcFail[t.id] < 10 * 60e3) return Promise.resolve(null);
-    if (ytPending.has(t.id)) return ytPending.get(t.id);
-    const words = [t.a, songName(t.t) || t.t].filter(Boolean).join(' '), q = enc(words);
-    // each source answers with its own list; only a video that is really this song counts
+    if (hit && Date.now() - hit[1] < 30 * 864e5 && !ytBad.has(hit[0])) return Promise.resolve(hit[0]);
+    const pend = ytPending.get(t.id);
+    if (pend) return pend.keyed || !useKey ? pend.job : pend.job.then((v) => v || ytResolve(t, { useKey: true }));
+    const failed = ytcFail[t.id];
+    if (failed && Date.now() - failed.at < 10 * 60e3 && (failed.keyed || !useKey)) return Promise.resolve(null);
+    const base = songName(String(t.t || '').split(/\s[-–]\s/)[0]) || songName(t.t) || t.t;
+    const q = enc([t.a, base].filter(Boolean).join(' '));
     const pickOrFail = (items) => {
       const best = items.length ? pickVideo(items, t) : null;
       const v = best ? (String(best.url).split('v=')[1] || '').split('&')[0] : '';
       return v || Promise.reject(new Error('no match'));
     };
+    const streams = (j) => (j ? (j.items || []).filter((x) => x.url && x.type === 'stream') : []);
     const sources = [
-      piped('/search?q=' + q + '&filter=music_songs', (j) => (j.items || []).some((x) => x.url && x.type === 'stream'))
-        .then((j) => pickOrFail(j ? (j.items || []).filter((x) => x.url && x.type === 'stream') : [])),
-      // the "songs" list often misses the real upload (Hotline Bling only had covers there), so
-      // the normal video search is asked at the same time
-      piped('/search?q=' + q + '&filter=videos', (j) => (j.items || []).some((x) => x.url && x.type === 'stream'))
-        .then((j) => pickOrFail(j ? (j.items || []).filter((x) => x.url && x.type === 'stream') : [])),
+      piped('/search?q=' + q + '&filter=music_songs', (j) => streams(j).length > 0).then((j) => pickOrFail(streams(j))),
+      piped('/search?q=' + q + '&filter=videos', (j) => streams(j).length > 0).then((j) => pickOrFail(streams(j))),
       raceJson(INVHOSTS.map((h) => h + '/api/v1/search?type=video&q=' + q), (j) => Array.isArray(j) && j.some((x) => x.videoId))
         .then((j) => pickOrFail((j || []).filter((x) => x.videoId).map((x) => ({ url: '/watch?v=' + x.videoId, type: 'stream', title: x.title, uploader: x.author, duration: x.lengthSeconds })))),
     ];
-    // The YouTube key has a daily limit (about 100 searches), so it's the backup: it's only used
-    // when the free servers fail or haven't answered within 2.5 seconds.
-    const viaKey = () => fetch('https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=8&q=' + q + '&key=' + YT_KEY, { signal: AbortSignal.timeout(8000) })
-      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(r.status))))
-      .then((j) => pickOrFail((j.items || []).map((x) => ({ url: '/watch?v=' + x.id.videoId, type: 'stream', title: unEntity(x.snippet.title), uploader: unEntity(x.snippet.channelTitle), duration: 0 }))));
-    if (YT_KEY) {
+    const keyed = useKey && !!liveKey();
+    if (keyed) {
+      // the free servers get a short head start (saves the key's daily lookups when they're quick)
       const free = Promise.any(sources);
-      sources.push(Promise.race([free.then(() => 'done', () => 'failed'), new Promise((r) => setTimeout(() => r('slow'), 2500))])
-        .then((why) => (why === 'done' ? Promise.reject(new Error('not needed')) : viaKey())));
+      sources.push(Promise.race([free.then(() => 'done', () => 'go'), new Promise((r) => setTimeout(() => r('go'), 600))])
+        .then((why) => (why === 'done' ? Promise.reject(new Error('not needed')) : keySearch(q).then(pickOrFail)))
+        // nothing matched: one more, wider search ("artist song audio")
+        .catch((e) => (e.message === 'not needed' ? Promise.reject(e) : keySearch(enc([t.a, base, 'audio'].filter(Boolean).join(' '))).then(pickOrFail))));
     }
     const job = Promise.any(sources)
-      .then((v) => { ytc[t.id] = [v, Date.now()]; saveYt(); return v; })
-      .catch(() => { ytcFail[t.id] = Date.now(); return null; })
+      .then((v) => { ytc[t.id] = [v, Date.now()]; saveYt(); delete ytcFail[t.id]; return v; })
+      .catch(() => { ytcFail[t.id] = { at: Date.now(), keyed }; return null; })
       .finally(() => ytPending.delete(t.id));
-    ytPending.set(t.id, job);
+    ytPending.set(t.id, { job, keyed });
     return job;
   }
   // The song's audio as a plain stream, for the normal <audio> player (iPad/iPhone, or when the
@@ -568,7 +605,7 @@
     await tryNext();
     return true;
   }
-  const ytForget = (t) => { if (t && ytc[t.id]) { delete ytc[t.id]; saveYt(); } if (t) ytcFail[t.id] = Date.now(); };
+  const ytForget = (t) => { if (t && ytc[t.id]) { delete ytc[t.id]; saveYt(); } };
   let ytApi = null, ytNP = null, ytN = 0;
   const ytCur = () => ytNP;
   function loadYT() {
@@ -632,10 +669,15 @@
     P.sysPaused = false;
     try { if (P.eng === 'yt' && P.mode) ytNP.playVideo(); } catch { /* ignore */ }
   });
-  function ytErr() { const w = ytWant; if (w && w.tok === P.tok) { ytForget(P.cur); w.fail(); } }
+  function ytErr() {
+    const w = ytWant;
+    if (!w || w.tok !== P.tok || w.done) return;
+    markBad(w.v); ytForget(P.cur);
+    if (w.retry) { w.done = true; w.retry(); } else w.fail();
+  }
   // start video v; onFail runs if it errors or doesn't start within `wait` ms
   function ytStart(v, tok, o) {
-    const w = { tok, v, started: false, done: false, onStart: o.onStart };
+    const w = { tok, v, started: false, done: false, onStart: o.onStart, retry: o.retry };
     w.fail = () => { if (w.done) return; w.done = true; if (ytWant === w) { try { ytNP?.stopVideo?.(); } catch { /* ignore */ } } o.onFail?.(); };
     ytWant = w;
     const go = (p) => {
@@ -649,12 +691,20 @@
     if ($('#npArtBox')) $('#npArtBox').hidden = on;
     if ($('#npVid')) $('#npVid').hidden = !on;
   }
-  async function playYT(v, tok) {
+  async function playYT(v, tok, tries = 0) {
     if (tok !== P.tok) return;
     P.eng = 'yt';
     showVid(true); setBuffering(true); setPlaying(true);
+    const t = P.cur;
     ytStart(v, tok, {
       wait: 7000,
+      // this video won't play here (blocked on other sites, removed): look again without it
+      retry: tries < 3 && t && t.src === 'dz' ? async () => {
+        const nv = await ytResolve(t, { useKey: true });
+        if (tok !== P.tok) return;
+        if (nv && nv !== v) playYT(nv, tok, tries + 1);
+        else { stopEngines(); P.eng = 'audio'; playFallback(t, tok); }
+      } : null,
       // YouTube's player wouldn't start: try the song as a plain stream, then the other sources
       onFail: () => { if (tok !== P.tok) return; stopEngines(); P.eng = 'audio'; playFullAudio(v, tok, () => playFallback(P.cur, tok)); },
     });
@@ -669,36 +719,24 @@
     setBuffering(true); markCurrent(); renderQueue(); bumpTaste(t);
     remember({ k: 'song', id: t.id, t: t.t, s: t.a, img: t.art, ref: slim(t) });
     // while this one starts, quietly find the next two so skipping is instant
-    setTimeout(() => { if (tok === P.tok) [P.q[P.i + 1], P.q[P.i + 2]].forEach(prepare); }, 1500);
+    // (the very next song gets the full search, so it starts instantly when this one ends)
+    setTimeout(() => { if (tok !== P.tok) return; const n = P.q[P.i + 1]; if (n && n.src === 'dz') ytResolve(n, { useKey: true }).catch(() => {}); prepare(P.q[P.i + 2]); }, 4000);
     if (t.src === 'au') { await playAudioSource(AU + '/tracks/' + t.id.slice(2) + '/stream?' + APP, tok); return; }
     if (t.src === 'ia') { await playAudioSource(IA + '/download/' + enc(t.id.slice(2)) + '/' + t.file, tok); return; }
     if (t.src !== 'dz') { await playFallback(t, tok); return; }
     // Already found (played before, or looked up ahead of time): the full song starts right away
     const hit = ytc[t.id];
-    if (hit && Date.now() - hit[1] < 30 * 864e5) { await playFull(hit[0], tok); return; }
-    // Not found yet: sound starts the instant you tap (the preview) while the full song is found,
-    // then it fades over to the full song from the start
-    const previewing = !!t.pre;
-    if (previewing) playAudioSource(t.pre, tok);
-    const v = await ytResolve(t);
+    if (hit && Date.now() - hit[1] < 30 * 864e5 && !ytBad.has(hit[0])) { await playFull(hit[0], tok); return; }
+    // Not found yet: find the full song first (usually well under a second) and start it from the
+    // beginning. The 30-second preview is only a last resort when no full version exists anywhere.
+    const v = await ytResolve(t, { useKey: true });
     if (tok !== P.tok) return;
-    if (v && IOS && previewing) {
-      // iPad / iPhone: keep the preview playing until a full-song stream actually answers, then switch
-      const url = await workingStream(v);
-      if (tok !== P.tok) return;
-      if (url) { await switchTo(() => playAudioSource(url, tok, () => playFallback(t, tok)), tok, true); return; }
-      // no plain stream answered: try YouTube's player while the preview keeps playing
-      const ok = await new Promise((res) => ytStart(v, tok, {
-        wait: 6000,
-        onStart: () => { P.onAudioFail = null; P.eng = 'yt'; audio.pause(); audio.removeAttribute('src'); audio.load(); applyVol(); showVid(true); res(true); },
-        onFail: () => res(false),
-      }));
-      if (tok !== P.tok || ok) return;
-    } else if (v) { await switchTo(() => playFull(v, tok), tok, previewing); return; }
-    const alt = await findFullAlt(t, tok);   // the full song somewhere else; the preview keeps playing meanwhile
+    if (v) { await playFull(v, tok); return; }
+    const alt = await findFullAlt(t, tok);
     if (tok !== P.tok) return;
-    if (alt) { await switchTo(alt, tok, previewing); return; }
-    if (!previewing) failSkip('Couldn’t find a playable version of “' + t.t + '”', tok);
+    if (alt) { await alt(); return; }
+    if (t.pre) { await playAudioSource(t.pre, tok); return; }
+    failSkip('Couldn’t find a playable version of “' + t.t + '”', tok);
   }
   async function playFull(v, tok) {
     await playYT(v, tok);
