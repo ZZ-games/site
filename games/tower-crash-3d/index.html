@@ -1,10 +1,6 @@
-<!-- Ultimate Game Stash file--> 
-<!-- For the regularly updating doc go to https://docs.google.com/document/d/1_FmH3BlSBQI7FGgAQL59-ZPe8eCxs35wel6JUyVaG8Q/ -->
-
 <!doctype html>
 <html>
-<head><script src="../../zz-desktop.js"></script>
-    <base href="ext/bubbls-youtube-playables-main/tower-crash-3d/">
+<head>
     <meta name='viewport' content='width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no' />
     <meta charset='utf-8'>
     <link rel="stylesheet" type="text/css" href="styles.css" nonce="ZIkTb7JYx2qzmmhusnAliA">
@@ -12,7 +8,37 @@
     <style></style>
     <title>Tower Crash 3D</title>
    
-    <script src="ext/bubbls-youtube-playables-main/ytgame.js" nonce="ZIkTb7JYx2qzmmhusnAliA"></script>
+    <script nonce="ZIkTb7JYx2qzmmhusnAliA">
+if (!window.ytgame) {
+  window.ytgame = {
+    SDK_VERSION: "standalone",
+    IN_PLAYABLES_ENV: false,
+    SdkError: function (t) { this.errorType = t; this.message = ""; },
+    SdkErrorType: { UNDEFINED: 0, GAMEAPI_UNDEFINED: 1 },
+    game: {
+      firstFrameReady: function () {},
+      gameReady: function () {},
+      loadData: function () { return Promise.resolve(localStorage.getItem("tower-crash-3d-save") || ""); },
+      saveData: function (data) { localStorage.setItem("tower-crash-3d-save", data); return Promise.resolve(); }
+    },
+    engagement: { sendScore: function () { return Promise.resolve(); } },
+    ads: {
+      requestAd: function () { return Promise.resolve(3); },
+      requestInterstitialAd: function () { return Promise.resolve(); },
+      AdResult: { UNKNOWN: 0, SHOWED: 1, REJECTED: 3, DISMISSED: 2 }
+    },
+    health: { logError: function () {}, logWarning: function () {} },
+    system: {
+      getLanguage: function () { return Promise.resolve("en"); },
+      isAudioEnabled: function () { return true; },
+      onAudioEnabledChange: function () { return function () {}; },
+      onPause: function () { return function () {}; },
+      onResume: function () { return function () {}; }
+    }
+  };
+  window.ytgamehelper = { myConsoleLog: function () {} };
+}
+</script>
 
     <script nonce="ZIkTb7JYx2qzmmhusnAliA">
         window.ytgame.game.firstFrameReady();
