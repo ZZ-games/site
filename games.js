@@ -62,6 +62,7 @@ const GAMES = [
   { title: "Sling Drift", category: "Racing", repo: "Sling-Drift", url: "https://zz-games.github.io/Sling-Drift/", image: "covers/sling-drift.jpg", new: true, tags: "slingshot drift car" },
   { title: "Krillion", category: "Puzzle", repo: "Open-Krillion.io", url: "https://zz-games.github.io/site/games/krillion/", image: "covers/krillion.jpg" },
   { title: "Summer Rider", category: "Racing", user: "zz126j", repo: "SummerRider", url: "https://zz-games.github.io/site/games/summerrider/", image: "covers/summer-rider.jpg" },
+  { title: "Stunt Car Extreme", category: "Racing", repo: "Stunt-Car-Extreme", url: "https://zz-games.github.io/Stunt-Car-Extreme/", image: "covers/stunt-car-extreme.jpg", new: true, tags: "stunt car ramps driving" },
   { title: "Snow Rider", category: "Racing", user: "zz126j", repo: "SnowRider", url: "https://zz-games.github.io/site/games/snowrider/", image: "covers/snow-rider.jpg" },
   { title: "Ragdoll Archers", category: "Action", repo: "RagdollArchers", url: "https://zz-games.github.io/site/games/ragdollarchers/", image: "covers/ragdoll-archers.jpg" },
   { title: "Rooftop Run", category: "Arcade", repo: "Rooftop-Run", url: "https://zz-games.github.io/site/games/rooftop-run/", image: "covers/rooftop-run.jpg" },
