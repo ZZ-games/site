@@ -71,7 +71,7 @@ const GAMES = [
   { title: "PolyTrack", category: "Racing", repo: "polytrack2", url: "https://zz-games.github.io/site/games/polytrack2/", image: "covers/polytrack.jpg" },
   { title: "Drift Boss", category: "Racing", repo: "Drift-Boss", url: "https://zz-games.github.io/site/games/drift-boss/", image: "covers/drift-boss.jpg", imagePos: "8% center", hot: true },
   { title: "Subway Surfers", category: "Arcade", repo: "subway-surfers", url: "https://zz-games.github.io/site/games/subway-surfers/", image: "covers/subway-surfers.jpg", hot: true, pick: true },
-  { title: "Obby On A Bike", category: "Racing", repo: "Obby-On-A-Bike", url: "https://zz-games.github.io/Obby-On-A-Bike/", image: "covers/obby-on-a-bike.jpg", new: true, tags: "obby parkour bike" },
+  { title: "Obby On A Bike", category: "Racing", repo: "Obby-On-A-Bike", url: "https://zz-games.github.io/Obby-On-A-Bike/", image: "covers/obby-on-a-bike.jpg?v=2", new: true, tags: "obby parkour bike" },
   { title: "Apple Worm", category: "Puzzle", repo: "Apple-Worm", url: "https://zz-games.github.io/site/games/apple-worm/", image: "covers/apple-worm.jpg" },
   { title: "Escape Road", category: "Racing", repo: "Escape-Road", url: "https://zz-games.github.io/site/games/escape-road/", image: "covers/escape-road.jpg" },
   { title: "Robo Cleaning Sim", category: "Other", repo: "Robo-Cleaning-Sim", url: "https://zz-games.github.io/Robo-Cleaning-Sim/", image: "covers/robo-cleaning-sim.jpg", new: true, tags: "robot cleaning simulator" },
